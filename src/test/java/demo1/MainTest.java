@@ -31,13 +31,41 @@ public class MainTest {
         String hello = "Hello";
         String world = "World";
 
-        Set<String> set = Set.of(hello,world);
+        Set<String> fewWord = Set.of(hello,world);
 
         Flux<String> fewWords = Flux.just(hello, world);
-        fewWords.subscribe(it -> set.remove(it));
+        fewWords.subscribe(it -> fewWord.remove(it));
 
-        Assert.assertTrue(set.isEmpty());
+        Assert.assertTrue(fewWord.isEmpty());
     }
 
+    @Test
+    public void fromIterable() throws Exception {
 
+        final String the = "the";
+        final String words1 = "words";
+        final String brown = "brown";
+        final String fox = "fox";
+        final String jumped = "jumped";
+        final String over = "over";
+        final String lazy = "lazy";
+        final String dog = "dog";
+
+        final Set<String> words = Set.of(
+                the,
+                words1,
+                brown,
+                fox,
+                jumped,
+                over,
+                the,
+                lazy,
+                dog
+        );
+
+        Flux<String> manyWords = Flux.fromIterable(words);
+        manyWords.subscribe(it -> words.remove(it));
+
+        Assert.assertTrue(words.isEmpty());
+    }
 }
