@@ -6,13 +6,14 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.internal.util.collections.Sets;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 import java.util.*;
 
 public class FluxTest {
 
     final String the = "the";
-    final String words1 = "words";
+    final String words1 = "word";
     final String brown = "brown";
     final String fox = "fox";
     final String jumped = "jumped";
@@ -84,14 +85,13 @@ public class FluxTest {
            "12.o",
            "13.p",
            "14.r",
-           "15.s",
-           "16.t",
-           "17.u",
-           "18.v",
-           "19.w",
-           "20.x",
-           "21.y",
-           "22.z");
+           "15.t",
+           "16.u",
+           "17.v",
+           "18.w",
+           "19.x",
+           "20.y",
+           "21.z");
 
         final List<String> expected = new ArrayList();
 
@@ -107,4 +107,48 @@ public class FluxTest {
 
         Assert.assertTrue(expected.isEmpty());
     }
+
+    @Test
+    public void restoringMissingLetter() {
+        final List<String> result = List.of(
+                " 1.a",
+                " 2.b",
+                " 3.d",
+                " 4.e",
+                " 5.f",
+                " 6.g",
+                " 7.h",
+                " 8.j",
+                " 9.l",
+                "10.m",
+                "11.n",
+                "12.o",
+                "13.p",
+                "14.r",
+                "15.s",
+                "16.t",
+                "17.u",
+                "18.v",
+                "19.w",
+                "20.x",
+                "21.y",
+                "22.z");
+
+        final List<String> expected = new ArrayList();
+        final Mono<String> missing = Mono.just("s");
+
+        Flux.fromIterable(words)
+                .flatMap(word -> Flux.fromArray(word.split("")))
+                .concatWith(missing)
+                .distinct()
+                .sort()
+                .zipWith(Flux.range(1, Integer.MAX_VALUE), (string, count) -> String.format("%2d.%s", count, string))
+                .subscribe(expected::add);
+
+        result.stream()
+                .forEach(expected::remove);
+
+        Assert.assertTrue(expected.isEmpty());
+    }
+
 }
