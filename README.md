@@ -7,6 +7,10 @@
 
 ## Flux
 
+* just
+* fromIterable
+* 
+
 ## Mono
 
 ## Schedulers
