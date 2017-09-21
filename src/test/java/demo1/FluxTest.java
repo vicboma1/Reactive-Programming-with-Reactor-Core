@@ -49,28 +49,38 @@ public class FluxTest {
 
         String hello = "Hello";
         String world = "World";
-        final Set<String> fewWord = Sets.newSet(hello, world);
 
-        final Flux<String> fewWords = Flux.just(hello, world);
-        fewWords.subscribe(fewWord::remove);
+        final StringBuilder expected = new StringBuilder(hello)
+                .append(world);
 
-        Assert.assertTrue(fewWord.isEmpty());
+        final StringBuilder result = new StringBuilder();
+
+        Flux.just(hello, world)
+            .subscribe(result::append);
+
+        Assert.assertEquals(expected.toString(),result.toString());
     }
 
     @Test
     public void fromIterable() throws Exception {
 
-        final Set<String> result = new HashSet<>();
+        final StringBuilder result = new StringBuilder();
 
-        Flux.fromIterable(words)
-                .subscribe(result::add);
+        Mono.just("[")
+             .concatWith(
+                     Flux.fromIterable(words)
+                         .filter(word -> !word.equals(dog))
+                         .flatMap(word -> Flux.just(word.concat(", ")))
+             )
+             .concatWith(Flux.just(dog,"]"))
+             .subscribe(result::append);
 
-        final boolean removeAll = result.removeAll(words);
-        Assert.assertTrue(removeAll);
+
+        Assert.assertEquals(words.toString(),result.toString());
     }
 
     @Test
-    public void findingMissingLetter() {
+    public void findingMissingLetterFromArray() {
         final List<String> result = List.of(
            " 1.a",
            " 2.b",
@@ -190,7 +200,7 @@ public class FluxTest {
                 .subscribe(expected::add);
 
         result.stream()
-                .forEach(expected::remove);
+               .forEach(expected::remove);
 
         Assert.assertTrue(expected.isEmpty());
     }
@@ -233,40 +243,96 @@ public class FluxTest {
                 .subscribe(expected::add);
 
         result.stream()
-                .forEach(expected::remove);
+              .forEach(expected::remove);
 
         Assert.assertTrue(expected.isEmpty());
     }
 
     @Test
     public void subscribeNonBlocking() {
-        Flux<String> helloPauseWorld =
-                Mono.just("Hello")
-                    .concatWith(Mono.just("wo"))
-                    .concatWith(Mono.just("rl"))
-                    .concatWith(Mono.just("d!"))
-                    .delayElements(Duration.ofMillis(500));
 
-        helloPauseWorld.subscribe(it ->{
-            Assert.assertTrue(false);
+        Mono.just("Hello")
+            .concatWith(Mono.just("wo"))
+            .concatWith(Mono.just("rl"))
+            .concatWith(Mono.just("d!"))
+            .delayElements(Duration.ofMillis(500))
+            .subscribe(it ->{
+                 Assert.assertTrue(false);
         });
     }
 
     @Test
     public void subscribeBlockingWithToStream() {
         String expected = "Helloworld!";
-        StringBuilder result = new StringBuilder();
+        final StringBuilder result = new StringBuilder();
 
         Mono.just("Hello")
-                .concatWith(Mono.just("wo"))
+                .concatWith(
+                        Mono.just("wo")
+                            .delayElement(Duration.ofMillis(100))
+                )
                 .concatWith(Mono.just("rl"))
                 .concatWith(
                         Mono.just("d!")
                             .delayElement(Duration.ofMillis(500))
                 )
+                .delayElements(Duration.ofMillis(20))
                 .toStream()
                 .forEach(it -> result.append(it));
 
         Assert.assertEquals(expected,result.toString());
+    }
+
+    @Test
+    public void firstEmittingWithoutDelaySubcription() {
+        String late = "oops I'm late";
+        final List<String> first = List.of("let's get", "the party", "started");
+
+        final StringBuilder expected = new StringBuilder()
+                .append(first.toString());
+                //.append(late);
+
+        final StringBuilder result = new StringBuilder();
+
+        Flux.firstEmitting(
+                Mono.just(late)
+                        .delaySubscription(
+                                Duration.ofMillis(100)
+                        ),
+                Flux.just(first)
+                    .delayElements(Duration.ofMillis(33))
+        )
+        .toIterable()
+        .forEach(result::append);
+
+        Assert.assertEquals(expected.toString(),result.toString());
+
+    }
+
+    @Test
+    public void firstEmittingWithDelayElement() {
+        String late = "oops I'm late";
+        final List<String> first = List.of("let's get", "the party", "started");
+
+        final StringBuilder expected = new StringBuilder()
+                .append(late);
+
+        final StringBuilder result = new StringBuilder();
+
+        Flux.firstEmitting(
+                Mono.just(late)
+                        .delayElement(
+                                Duration.ofMillis(20)
+                        ),
+                Flux.just(first)
+                        .delayElements(
+                                Duration.ofMillis(33)
+                        )
+        )
+         .toIterable()
+         .forEach(result::append);
+
+        Assert.assertEquals(expected.toString(),result.toString());
+
     }
 }
