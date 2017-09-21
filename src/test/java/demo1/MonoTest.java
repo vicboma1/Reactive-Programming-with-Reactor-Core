@@ -86,5 +86,30 @@ public class MonoTest {
         Assert.assertEquals("[Hello,Hello]",result.toString());
     }
 
+    @Test
+    public void as() throws Exception {
+
+        String date = "1986";
+
+        final int result = Mono.just(date)
+                .as(it -> Integer.valueOf(it.block()))
+                .intValue();
+
+        Assert.assertTrue(1986 == result);
+    }
+
+    @Test
+    public void cast() throws Exception {
+
+        Number date = 1986;
+
+        Mono.just(date)
+            .cast(Integer.class)
+            .subscribe(it -> {
+                Assert.assertTrue(1986 == it);
+            });
+
+
+    }
 
 }
