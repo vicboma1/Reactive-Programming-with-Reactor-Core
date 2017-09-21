@@ -15,6 +15,7 @@
 * subscribe
 
 ## Mono
+
 * just
 * delay
 * add
@@ -22,7 +23,7 @@
 * delaySubscription
 * as
 * cast
-
+* create
 
 ## Schedulers
 

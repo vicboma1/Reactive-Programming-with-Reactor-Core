@@ -108,7 +108,18 @@ public class MonoTest {
             .subscribe(it -> {
                 Assert.assertTrue(1986 == it);
             });
+    }
 
+    @Test
+    public void create() throws Exception {
+        final int expected = 10;
+
+        final Mono<Integer> mono = Mono.<Integer>create(monoSink -> {
+            monoSink.success(expected);
+        });
+        new CountDownLatch(1).await(50, TimeUnit.MILLISECONDS);
+
+        Assert.assertTrue(expected == mono.block());
 
     }
 
