@@ -6,8 +6,10 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.internal.util.collections.Sets;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.FluxSink;
 import reactor.core.publisher.Mono;
 
+import java.awt.event.ActionListener;
 import java.time.Duration;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -385,7 +387,10 @@ public class FluxTest {
                     sink.complete();
                 return state + 1;
             })
-            .subscribe(result::append);
+            .subscribe(
+                    result::append,
+                    error -> System.err.println("CAUGHT " + error)
+            );
 
         Assert.assertEquals(expected.toString(),result.toString());
     }
@@ -416,7 +421,44 @@ public class FluxTest {
                         sink.complete();
                     return state;
                 })
-                .subscribe(result::append);
+                .subscribe(
+                        result::append,
+                        error -> System.err.println("CAUGHT " + error)
+                );
+
+        Assert.assertEquals(expected.toString(),result.toString());
+    }
+
+    private String alphabet(int letterNumber) {
+        if (letterNumber < 1 || letterNumber > 26) {
+            return null;
+        }
+        int letterIndexAscii = 'A' + letterNumber - 1;
+        return "" + (char) letterIndexAscii;
+    }
+
+    @Test
+    public void handle() {
+        final StringBuilder result = new StringBuilder();
+
+        final StringBuilder expected = new StringBuilder()
+                .append("O")
+                .append("P")
+                .append("T");
+
+        Flux.just(-1, 30, 15, 16, 20, 40,33)
+            .handle((i, sink) -> {
+                String letter = alphabet(i);
+                if( i == 40)
+                    sink.complete();
+
+                if (letter != null)
+                    sink.next(letter);
+            })
+           .subscribe(
+                   result::append,
+                   error -> System.err.println("CAUGHT " + error)
+           );
 
         Assert.assertEquals(expected.toString(),result.toString());
     }

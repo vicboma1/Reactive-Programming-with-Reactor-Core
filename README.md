@@ -14,6 +14,7 @@
 * toIterable
 * subscribe
 * generate
+* handle
 
 ## Mono - [Testing](https://github.com/vicboma1/Reactive-Programming-with-Reactor-Core/blob/master/src/test/java/demo1/MonoTest.java)
 
@@ -29,9 +30,9 @@
 * empty
 * first
 
+## Schedulers - [Testing](https://github.com/vicboma1/Reactive-Programming-with-Reactor-Core/blob/master/src/test/java/demo1/schedulersTest.java)
 
-
-## Schedulers
+*
 
 ## ParallelFlux
 
