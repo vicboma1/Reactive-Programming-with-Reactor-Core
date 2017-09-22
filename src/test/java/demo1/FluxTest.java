@@ -619,24 +619,49 @@ public class FluxTest {
         final String expected = "Something bad happened with I/O";
 
         Flux
-            .range(1, 10)
-            .map(i -> {
-                try { return convert(i); }
-                catch (IOException e) {
-                    throw Exceptions.propagate(
-                            new IOException((expected)
-                            )
-                    );
-                }
-            }).subscribe(
-                    v -> System.out.println("RECEIVED: " + v),
-                    e -> {
-                        if (Exceptions.unwrap(e) instanceof IOException) {
-                            Assert.assertEquals(expected, e.getMessage());
-                        } else {
-                            Assert.assertFalse(true);
-                        }
+                .range(1, 10)
+                .map(i -> {
+                    try {
+                        return convert(i);
+                    } catch (IOException e) {
+                        throw Exceptions.propagate(
+                                new IOException((expected)
+                                )
+                        );
                     }
-            );
+                }).subscribe(
+                v -> System.out.println("RECEIVED: " + v),
+                e -> {
+                    if (Exceptions.unwrap(e) instanceof IOException) {
+                        Assert.assertEquals(expected, e.getMessage());
+                    } else {
+                        Assert.assertFalse(true);
+                    }
+                }
+        );
     }
+
+    @Test
+    public void log() throws Exception {
+        Integer expected = 30;
+        int result = 0;
+        Flux.<Integer>range(1, 10)
+                .log()
+                .take(5)
+                .<Integer>handle(
+                    (i, sink) -> {
+                    if( i == 5)
+                        sink.complete();
+
+                        sink.next(Integer.valueOf(i * 2));
+                })
+                .collectList()
+                .subscribe(
+                        it -> Assert.assertTrue(expected == it.stream().mapToInt(Integer::intValue).sum()),
+                        error -> System.err.println("CAUGHT " + error)
+                );
+
+    }
+
+
 }
