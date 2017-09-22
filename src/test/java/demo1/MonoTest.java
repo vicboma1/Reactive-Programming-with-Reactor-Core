@@ -14,6 +14,9 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * @author vicboma
+ */
 public class MonoTest {
 
     @Before
@@ -33,9 +36,9 @@ public class MonoTest {
         final StringBuilder result = new StringBuilder();
 
         Mono.just(hello)
-            .subscribe(result::append);
+                .subscribe(result::append);
 
-        Assert.assertEquals(expected.toString(),result.toString());
+        Assert.assertEquals(expected.toString(), result.toString());
     }
 
     @Test
@@ -47,10 +50,10 @@ public class MonoTest {
         final StringBuilder result = new StringBuilder();
 
         Mono.just(hello)
-             .delayElement(Duration.ofMillis(400))
-             .subscribe(result::append);
+                .delayElement(Duration.ofMillis(400))
+                .subscribe(result::append);
 
-        Assert.assertEquals(expected.toString(),"");
+        Assert.assertEquals(expected.toString(), "");
 
     }
 
@@ -69,7 +72,7 @@ public class MonoTest {
 
         new CountDownLatch(1).await(300, TimeUnit.MILLISECONDS);
 
-        Assert.assertEquals(expected.toString(),result.toString());
+        Assert.assertEquals(expected.toString(), result.toString());
     }
 
     @Test
@@ -80,10 +83,10 @@ public class MonoTest {
         final StringBuilder result = new StringBuilder();
 
         Mono.just(hello)
-             .and(it -> Mono.just(it))
-             .subscribe(result::append);
+                .and(it -> Mono.just(it))
+                .subscribe(result::append);
 
-        Assert.assertEquals("[Hello,Hello]",result.toString());
+        Assert.assertEquals("[Hello,Hello]", result.toString());
     }
 
     @Test
@@ -104,10 +107,10 @@ public class MonoTest {
         Number date = 1986;
 
         Mono.just(date)
-            .cast(Integer.class)
-            .subscribe(it -> {
-                Assert.assertTrue(1986 == it);
-            });
+                .cast(Integer.class)
+                .subscribe(it -> {
+                    Assert.assertTrue(1986 == it);
+                });
     }
 
     @Test
@@ -117,10 +120,31 @@ public class MonoTest {
         final Mono<Integer> mono = Mono.<Integer>create(monoSink -> {
             monoSink.success(expected);
         });
-        new CountDownLatch(1).await(50, TimeUnit.MILLISECONDS);
+
+        new CountDownLatch(1).await(100, TimeUnit.MILLISECONDS);
 
         Assert.assertTrue(expected == mono.block());
-
     }
 
+    @Test
+    public void empty() throws Exception {
+        String expected = null;
+        Mono<String> result = Mono.empty();
+
+        Assert.assertEquals(expected, result.block());
+    }
+
+    @Test
+    public void first() throws Exception {
+        String expected = "Hello";
+        Mono<String> result = Mono.first(List.of(
+                Mono.just(expected)
+                        .delayElement(Duration.ofMillis(500)),
+                Mono.just("World")
+                        .delayElement(Duration.ofMillis(501)))
+        );
+
+        Assert.assertEquals(expected, result.block());
+
+    }
 }

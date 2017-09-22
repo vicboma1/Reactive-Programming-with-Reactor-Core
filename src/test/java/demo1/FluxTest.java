@@ -11,6 +11,9 @@ import reactor.core.publisher.Mono;
 import java.time.Duration;
 import java.util.*;
 
+/**
+ * @author vicboma
+ */
 public class FluxTest {
 
     final String the = "the";
