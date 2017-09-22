@@ -5,6 +5,7 @@
 
 ## Flux - [Testing](https://github.com/vicboma1/Reactive-Programming-with-Reactor-Core/blob/master/src/test/java/demo1/FluxTest.java)
 
+* never
 * just
 * fromIterable
 * fromArray
@@ -29,6 +30,8 @@
 * transform
 * compose
 * doOnNext
+* merge
+* mergeSequential
 
 ## Mono - [Testing](https://github.com/vicboma1/Reactive-Programming-with-Reactor-Core/blob/master/src/test/java/demo1/MonoTest.java)
 
@@ -47,7 +50,8 @@
 * fromSupplier
 * fromCallable
 * fromRunnable
-* fromCompletable
+* fromCompletable 
+* zip
 
 ## Schedulers - [Testing](https://github.com/vicboma1/Reactive-Programming-with-Reactor-Core/blob/master/src/test/java/demo1/schedulersTest.java)
 

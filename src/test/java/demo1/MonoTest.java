@@ -31,6 +31,14 @@ public class MonoTest {
     }
 
     @Test
+    public void never() throws Exception {
+
+        final String expected = "MonoNever";
+
+        Assert.assertEquals(expected,Mono.never().toString());
+    }
+
+    @Test
     public void just() throws Exception {
 
         String hello = "Hello";
@@ -231,5 +239,65 @@ public class MonoTest {
         expected.get();
 
         Assert.assertEquals("MonoCompletionStage", result.toString());
+    }
+
+
+    @Test
+    public void zipImpl() throws Exception{
+
+        final String a = "A";
+        final String b = "B";
+        final String data = "";
+
+        final StringBuilder expected = new StringBuilder().append(a).append(b).append(data);
+        final StringBuilder result = new StringBuilder();
+
+        Mono.when(
+                Mono.just(a),
+                Mono.just(b),
+                Mono.justOrEmpty(data)
+        ).map(t ->
+             new StringBuffer()
+                    .append(t.getT1())
+                    .append(t.getT2())
+                    .append(t.getT3())
+                    .toString()
+        ).subscribe(
+                result::append,
+                s -> System.out.println("error: " + s),
+                () -> { System.out.println("complete!");
+         });
+
+        Assert.assertEquals(expected.toString(), result.toString());
+    }
+
+    @Test
+    public void zip() throws Exception{
+
+        final String a = "A";
+        final String b = "B";
+        final String data = "";
+
+        final StringBuilder expected = new StringBuilder().append(a).append(b).append(data);
+        final StringBuilder result = new StringBuilder();
+
+        Mono.zip(strings -> {
+            final StringBuffer sb = new StringBuffer();
+            for (Object string : strings) {
+                sb.append((String) string);
+            }
+            return sb.toString();
+        },
+                Mono.just(a),
+                Mono.just(b),
+                Mono.justOrEmpty(data)
+        )
+         .subscribe(
+                result::append,
+                s -> System.out.println("error: " + s),
+                () -> { System.out.println("complete!");
+                });
+
+        Assert.assertEquals(expected.toString(), result.toString());
     }
 }

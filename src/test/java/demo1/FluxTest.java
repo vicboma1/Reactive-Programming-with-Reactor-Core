@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.time.Duration;
 import java.util.*;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -59,6 +60,15 @@ public class FluxTest {
     public void tearDown() throws Exception {
         words = null;
     }
+
+    @Test
+    public void never() throws Exception {
+
+        final String expected = "FluxNever";
+
+        Assert.assertEquals(expected,Flux.never().toString());
+    }
+
 
     @Test
     public void just() throws Exception {
@@ -680,8 +690,8 @@ public class FluxTest {
 
     @Test
     public void compose() throws Exception {
-        final List<String> expected1 = List.of("BLUE", "GREEN", "PURPLE");
 
+        final List<String> expected1 = List.of("BLUE", "GREEN", "PURPLE");
         final List<String> expected2 = List.of("BLUE", "GREEN", "ORANGE");
 
         final AtomicInteger ai = new AtomicInteger();
@@ -707,4 +717,45 @@ public class FluxTest {
     }
 
 
+    @Test
+    public void merge() throws Exception {
+        final StringBuilder expected = new StringBuilder().append("blue").append("green").append("orange").append("purple").append("white").append("red");
+        final StringBuilder result = new StringBuilder();
+
+        Flux.merge(Flux.fromIterable(Arrays.asList("blue", "green", "orange", "purple")))
+            .mergeWith(Flux.fromIterable(Arrays.asList("white", "red")))
+            .toIterable()
+            .forEach(result::append);
+
+        Assert.assertEquals(expected.toString(), result.toString());
+
+    }
+
+    @Test
+    public void mergeSequential() throws Exception {
+
+        final StringBuilder expected = new StringBuilder().append("white").append("haze").append("red").append("blue").append("green").append("orange").append("purple");
+        final StringBuilder result = new StringBuilder();
+
+        Flux.mergeSequential(
+                Flux.fromIterable(
+                        Arrays.asList("blue", "green", "orange", "purple")
+                )
+                        .delayElements(Duration.ofMillis(50))
+        )
+            .mergeWith(
+                    Flux.just("red")
+            ).
+                delayElements(Duration.ofMillis(40))
+            .mergeWith(
+                    Flux.fromIterable(
+                            Arrays.asList("white", "haze")
+
+                    ))
+            .toIterable()
+            .forEach(result::append);
+
+        Assert.assertEquals(expected.toString(), result.toString());
+
+    }
 }
