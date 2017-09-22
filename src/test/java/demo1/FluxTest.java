@@ -5,14 +5,18 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.internal.util.collections.Sets;
+import reactor.core.Disposable;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.FluxSink;
 import reactor.core.publisher.Mono;
+import reactor.core.publisher.SignalType;
 
 import java.awt.event.ActionListener;
 import java.time.Duration;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.LongAdder;
 
 /**
  * @author vicboma
@@ -461,5 +465,56 @@ public class FluxTest {
            );
 
         Assert.assertEquals(expected.toString(),result.toString());
+    }
+
+    @Test
+    public void using() {
+        final StringBuilder result = new StringBuilder();
+        String expected = "DISPOSABLE";
+
+        final AtomicBoolean isDisposed = new AtomicBoolean();
+
+        Flux.using(
+            () -> new Disposable() {
+                @Override
+                public void dispose() {
+                    isDisposed.set(true);
+                }
+
+                @Override
+                public String toString() {
+                    return expected;
+                }
+            },
+            disposable -> Flux.just(disposable.toString()),
+            Disposable::dispose
+        ).subscribe(
+                result::append,
+                System.err::println
+        );
+
+        Assert.assertEquals(expected,result.toString());
+        Assert.assertTrue(isDisposed.get());
+
+    }
+
+    @Test
+    public void doFinally() throws Exception {
+        final LongAdder statsCancel = new LongAdder();
+
+        String expected = "foo";
+        final StringBuilder result = new StringBuilder();
+
+        Flux.just(expected, "bar")
+                .doFinally(type -> {
+                    if (type == SignalType.CANCEL)
+                        statsCancel.increment();
+                })
+                .take(1)
+                .subscribe(result::append);
+
+        Assert.assertTrue(statsCancel.intValue() == 1);
+        Assert.assertEquals(expected, result.toString());
+
     }
 }

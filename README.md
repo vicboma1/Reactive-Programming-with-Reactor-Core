@@ -15,6 +15,8 @@
 * subscribe
 * generate
 * handle
+* using
+* doFinally
 
 ## Mono - [Testing](https://github.com/vicboma1/Reactive-Programming-with-Reactor-Core/blob/master/src/test/java/demo1/MonoTest.java)
 
