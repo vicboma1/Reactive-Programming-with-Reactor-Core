@@ -16,6 +16,7 @@
 * generate
 * handle
 * using
+* range
 * doFinally
 * onError
 * elapse
@@ -37,7 +38,12 @@
 * create
 * block
 * empty
+* justOrEmpty
 * first
+* fromSupplier
+* fromCallable
+* fromRunnable
+* fromCompletable
 
 ## Schedulers - [Testing](https://github.com/vicboma1/Reactive-Programming-with-Reactor-Core/blob/master/src/test/java/demo1/schedulersTest.java)
 

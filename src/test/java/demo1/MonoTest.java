@@ -4,11 +4,14 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.reactivestreams.Publisher;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+import reactor.util.function.Tuple2;
 
 import java.time.Duration;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CountDownLatch;
@@ -135,6 +138,14 @@ public class MonoTest {
     }
 
     @Test
+    public void justOrEmpty() throws Exception {
+        String expected = null;
+        Mono<String> result = Mono.justOrEmpty(expected);
+
+        Assert.assertEquals(expected, result.block());
+    }
+
+    @Test
     public void first() throws Exception {
         String expected = "Hello";
         Mono<String> result = Mono.first(List.of(
@@ -149,22 +160,76 @@ public class MonoTest {
     }
 
     @Test
-    public void range() throws Exception {
+    public void fromSupplier() throws Exception {
+        final StringBuilder result = new StringBuilder();
 
-        Flux<Integer> oneRange = Flux.range(5, 3);
-        Assert.assertEquals(Integer.valueOf(5), oneRange.blockFirst());
-        Assert.assertTrue(oneRange.blockFirst() >= Integer.valueOf(5) && oneRange.blockLast() <= 8);
+        String expected = "MonoSupplier";
 
-        Flux<Integer> secondRange = Flux.range(6, 2);
-        Assert.assertEquals(Integer.valueOf(6), secondRange.blockFirst());
-        Assert.assertTrue(secondRange.blockFirst() >= Integer.valueOf(6) && secondRange.blockLast() <= 8);
+        Mono.just("")
+            .map( it ->
+                    Mono.fromSupplier(
+                            () -> Mono.empty()
+                    )
+            )
+            .subscribe(result::append);
 
-        Flux<Integer> thirdRante = Flux.range(0, 8);
-        Assert.assertEquals(Integer.valueOf(0), thirdRante.blockFirst());
-        Assert.assertTrue(thirdRante.blockFirst() >= Integer.valueOf(0) && thirdRante.blockLast() <= 8);
+        new CountDownLatch(1).await(1000, TimeUnit.MILLISECONDS);
+
+        Assert.assertEquals(expected, result.toString());
 
     }
 
+    @Test
+    public void fromCallable() throws Exception {
+        final StringBuilder result = new StringBuilder();
 
+        String expected = "MonoCallable";
 
+        Mono.just("")
+                .map( it ->
+                        Mono.fromCallable(
+                                () -> Mono.empty()
+                        )
+                )
+                .subscribe(result::append);
+
+        new CountDownLatch(1).await(1000, TimeUnit.MILLISECONDS);
+
+        Assert.assertEquals(expected, result.toString());
+    }
+
+    @Test
+    public void fromRunnable() throws Exception {
+        final StringBuilder result = new StringBuilder();
+
+        String expected = "MonoRunnable";
+
+        Mono.just("")
+                .map( it ->
+                        Mono.fromRunnable(
+                                () -> Mono.empty()
+                        )
+                )
+                .subscribe(result::append);
+
+        new CountDownLatch(1).await(1000, TimeUnit.MILLISECONDS);
+
+        Assert.assertEquals(expected, result.toString());
+    }
+
+    @Test
+    public void fromCompletable() throws Exception {
+        final CompletableFuture<Boolean> expected = CompletableFuture.completedFuture(false);
+
+        final StringBuilder result = new StringBuilder();
+
+        Mono.just("")
+                .map( it ->
+                        Mono.fromFuture(expected)
+                )
+                .subscribe(result::append);
+        expected.get();
+
+        Assert.assertEquals("MonoCompletionStage", result.toString());
+    }
 }
