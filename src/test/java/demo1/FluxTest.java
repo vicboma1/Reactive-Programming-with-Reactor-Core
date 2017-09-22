@@ -6,14 +6,19 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.internal.util.collections.Sets;
 import reactor.core.Disposable;
+import reactor.core.Exceptions;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.FluxSink;
 import reactor.core.publisher.Mono;
 import reactor.core.publisher.SignalType;
+import reactor.util.function.Tuple2;
 
 import java.awt.event.ActionListener;
+import java.io.IOException;
 import java.time.Duration;
 import java.util.*;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.LongAdder;
@@ -516,5 +521,106 @@ public class FluxTest {
         Assert.assertTrue(statsCancel.intValue() == 1);
         Assert.assertEquals(expected, result.toString());
 
+    }
+
+    @Test
+    public void onError() throws Exception {
+        final LinkedList<String> result = new LinkedList();
+
+        final String expected = "Error";
+        Flux.interval(Duration.ofMillis(250))
+            .map(input -> {
+                if (input < 3)
+                    return "tick " + input;
+
+                throw new RuntimeException("RuntimeException!!!!");
+            })
+            .onErrorReturn(expected)
+            .subscribe(
+                    result::add,
+                    System.err::println
+            );
+
+        new CountDownLatch(1).await(2000, TimeUnit.MILLISECONDS);
+
+        Assert.assertEquals(expected, result.getLast());
+    }
+
+    @Test
+    public void onErrorRetry() throws Exception {
+        final LinkedList<Tuple2<Long,String>> result = new LinkedList();
+        final int expected = 6;
+
+        Flux.interval(Duration.ofMillis(250))
+                .map(input -> {
+                    if (input < 3)
+                        return "tick " + input;
+
+                    throw new RuntimeException("RuntimeException!!!!");
+                })
+                .elapsed()
+                .retry(1)
+                .subscribe(
+                        result::add,
+                        System.err::println
+                );
+
+        new CountDownLatch(1).await(2500, TimeUnit.MILLISECONDS);
+
+        Assert.assertEquals(expected, result.size());
+    }
+
+    @Test
+    public void onErrorRetryWhen() throws Exception {
+
+        String expected = "java.lang.RuntimeException: RuntimeException!!!!";
+
+        Flux.<String>error(new IllegalArgumentException())
+                .retryWhen(companion ->
+                        companion.zipWith(Flux.range(1, 4),
+                                            (error, index) -> {
+                                                if (index < 4)
+                                                    return index;
+                                                else
+                                                    throw Exceptions.propagate(new Throwable("RuntimeException!!!!"));
+                                            })
+                )
+                .doOnError(it ->{
+                    Assert.assertEquals(expected,it.toString());
+                });
+
+    }
+
+    private String convert(int i) throws IOException {
+        if (i > 3)
+            throw new IOException("boom " + i);
+
+        return "OK " + i;
+    }
+
+    @Test
+    public void tryCatch() throws Exception {
+        final String expected = "Something bad happened with I/O";
+
+        Flux
+            .range(1, 10)
+            .map(i -> {
+                try { return convert(i); }
+                catch (IOException e) {
+                    throw Exceptions.propagate(
+                            new IOException((expected)
+                            )
+                    );
+                }
+            }).subscribe(
+                    v -> System.out.println("RECEIVED: " + v),
+                    e -> {
+                        if (Exceptions.unwrap(e) instanceof IOException) {
+                            Assert.assertEquals(expected, e.getMessage());
+                        } else {
+                            Assert.assertFalse(true);
+                        }
+                    }
+            );
     }
 }
