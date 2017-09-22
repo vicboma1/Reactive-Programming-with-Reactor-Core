@@ -10,6 +10,7 @@ import reactor.core.publisher.Mono;
 
 import java.time.Duration;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * @author vicboma
@@ -80,6 +81,26 @@ public class FluxTest {
 
 
         Assert.assertEquals(words.toString(),result.toString());
+    }
+
+    @Test
+    public void fromIterableWithThrowableWithCompleteConsume() throws Exception {
+
+        final StringBuilder result = new StringBuilder();
+
+        Mono.just("[")
+                .concatWith(
+                        Flux.fromIterable(words)
+                                .filter(word -> !word.equals(dog))
+                                .flatMap(word -> Flux.just(word.concat(", ")))
+                )
+                .concatWith(Flux.just(dog,"]"))
+                .subscribe(
+                        result::append,
+                        throwable -> System.err.println(throwable.getMessage()),
+                        () -> {
+                            Assert.assertEquals(words.toString(),result.toString());
+                        });
     }
 
     @Test
@@ -337,5 +358,66 @@ public class FluxTest {
 
         Assert.assertEquals(expected.toString(),result.toString());
 
+    }
+
+    @Test
+    public void generate() {
+        final StringBuilder result = new StringBuilder();
+
+        final StringBuilder expected = new StringBuilder()
+                .append(0)
+                .append(3)
+                .append(6)
+                .append(9)
+                .append(12)
+                .append(15)
+                .append(18)
+                .append(21)
+                .append(24)
+                .append(27)
+                .append(30);
+
+        Flux.generate(
+            () -> 0,
+            (state, sink) -> {
+                sink.next(3 * state);
+                if (state == 10)
+                    sink.complete();
+                return state + 1;
+            })
+            .subscribe(result::append);
+
+        Assert.assertEquals(expected.toString(),result.toString());
+    }
+
+    @Test
+    public void generateMutable() {
+        final StringBuilder result = new StringBuilder();
+
+        final StringBuilder expected = new StringBuilder()
+                .append(0)
+                .append(3)
+                .append(6)
+                .append(9)
+                .append(12)
+                .append(15)
+                .append(18)
+                .append(21)
+                .append(24)
+                .append(27)
+                .append(30);
+
+        Flux.generate(
+                AtomicInteger::new,
+                (state, sink) -> {
+                    Integer inc = state.getAndIncrement();
+                    sink.next(3 * inc);
+                    if (inc == 10)
+                        sink.complete();
+                    return state;
+                })
+                .subscribe(result::append);
+
+        Assert.assertEquals(expected.toString(),result.toString());
     }
 }

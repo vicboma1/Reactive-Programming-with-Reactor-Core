@@ -147,4 +147,24 @@ public class MonoTest {
         Assert.assertEquals(expected, result.block());
 
     }
+
+    @Test
+    public void range() throws Exception {
+
+        Flux<Integer> oneRange = Flux.range(5, 3);
+        Assert.assertEquals(Integer.valueOf(5), oneRange.blockFirst());
+        Assert.assertTrue(oneRange.blockFirst() >= Integer.valueOf(5) && oneRange.blockLast() <= 8);
+
+        Flux<Integer> secondRange = Flux.range(6, 2);
+        Assert.assertEquals(Integer.valueOf(6), secondRange.blockFirst());
+        Assert.assertTrue(secondRange.blockFirst() >= Integer.valueOf(6) && secondRange.blockLast() <= 8);
+
+        Flux<Integer> thirdRante = Flux.range(0, 8);
+        Assert.assertEquals(Integer.valueOf(0), thirdRante.blockFirst());
+        Assert.assertTrue(thirdRante.blockFirst() >= Integer.valueOf(0) && thirdRante.blockLast() <= 8);
+
+    }
+
+
+
 }
