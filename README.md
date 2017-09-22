@@ -26,6 +26,9 @@
 * try-catch
 * propagate
 * log
+* transform
+* compose
+* doOnNext
 
 ## Mono - [Testing](https://github.com/vicboma1/Reactive-Programming-with-Reactor-Core/blob/master/src/test/java/demo1/MonoTest.java)
 

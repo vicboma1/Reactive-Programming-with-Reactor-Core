@@ -22,6 +22,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.LongAdder;
+import java.util.function.Function;
 
 /**
  * @author vicboma
@@ -644,7 +645,7 @@ public class FluxTest {
     @Test
     public void log() throws Exception {
         Integer expected = 30;
-        int result = 0;
+
         Flux.<Integer>range(1, 10)
                 .log()
                 .take(5)
@@ -661,6 +662,48 @@ public class FluxTest {
                         error -> System.err.println("CAUGHT " + error)
                 );
 
+    }
+
+    @Test
+    public void transform() throws Exception {
+        final List<String> expected = List.of("BLUE", "GREEN", "PURPLE");
+
+        Flux.fromIterable(List.of("blue", "green", "orange", "purple"))
+                .doOnNext(System.out::println)
+                .transform(
+                        it -> it.filter(color -> !color.equals("orange"))
+                                .map(String::toUpperCase)
+                )
+                .toIterable()
+                .forEach( it -> Assert.assertTrue(expected.contains(it)));
+    }
+
+    @Test
+    public void compose() throws Exception {
+        final List<String> expected1 = List.of("BLUE", "GREEN", "PURPLE");
+
+        final List<String> expected2 = List.of("BLUE", "GREEN", "ORANGE");
+
+        final AtomicInteger ai = new AtomicInteger();
+
+        final Flux<String> composedFlux =
+                Flux.fromIterable(Arrays.asList("blue", "green", "orange", "purple"))
+                        .doOnNext(System.out::println)
+                        .compose(f -> {
+                            if (ai.incrementAndGet() == 1) {
+                                return f.filter(color -> !color.equals("orange"))
+                                        .map(String::toUpperCase);
+                            }
+
+                            return f.filter(color -> !color.equals("purple"))
+                                    .map(String::toUpperCase);
+                        });
+
+        composedFlux.toIterable()
+                .forEach( it -> Assert.assertTrue(expected1.contains(it)));
+
+        composedFlux.toIterable()
+                .forEach( it -> Assert.assertTrue(expected2.contains(it)));
     }
 
 
