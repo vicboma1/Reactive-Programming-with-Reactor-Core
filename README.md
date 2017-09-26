@@ -53,18 +53,19 @@
 * fromCompletable 
 * zip
 
-## Schedulers - [Testing](https://github.com/vicboma1/Reactive-Programming-with-Reactor-Core/blob/master/src/test/java/demo1/schedulersTest.java)
+## Schedulers - [Testing](https://github.com/vicboma1/Reactive-Programming-with-Reactor-Core/blob/master/src/test/java/demo1/parallelFlux.java)
 
-* wip
+* parallel
+* elastic
+* inmediate
+* fromExecutor
+* fromExecutorService
 
 ## ParallelFlux with Schedulers - [Testing](https://github.com/vicboma1/Reactive-Programming-with-Reactor-Core/blob/master/src/test/java/demo1/parallelFlux.java)
 
 * parallel
-    * parallel
-    * elastic
-    * inmediate
-    * fromExecutor
-    * fromExecutorService
+* groups
+    
 
 ## ConnectableFlux - [Testing](https://github.com/vicboma1/Reactive-Programming-with-Reactor-Core/blob/master/src/test/java/demo1/connectableFlux.java)
 

@@ -5,6 +5,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.reactivestreams.Publisher;
+import reactor.core.Disposable;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.util.function.Tuple2;
@@ -18,6 +19,10 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
+
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.verify;
 
 /**
  * @author vicboma
@@ -90,16 +95,18 @@ public class MonoTest {
 
     @Test
     public void and() throws Exception {
-
         String hello = "Hello";
 
-        final StringBuilder result = new StringBuilder();
+        final Mono<String> just = Mono.just(hello);
+        final Mono<Void> and = just.and(it -> Mono.<String>just(hello));
 
-        Mono.just(hello)
-                .and(it -> Mono.just(it))
-                .subscribe(result::append);
+        final CompletableFuture<String> stringCompletableFuture = just.toFuture();
+        stringCompletableFuture
+            .thenAcceptAsync(it -> {
+                Assert.assertEquals(and.block(),Void.TYPE);
+            });
 
-        Assert.assertEquals("[Hello,Hello]", result.toString());
+        Assert.assertEquals(hello,stringCompletableFuture.get());
     }
 
     @Test

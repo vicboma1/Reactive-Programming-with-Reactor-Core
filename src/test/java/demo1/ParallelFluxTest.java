@@ -6,6 +6,7 @@ import org.junit.Before;
 import org.junit.Test;
 import reactor.core.publisher.ConnectableFlux;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.GroupedFlux;
 import reactor.core.scheduler.Schedulers;
 
 import java.util.*;
@@ -116,7 +117,7 @@ public class ParallelFluxTest {
 
     @Test
     public void fromExecutorsWithSchedulers() throws Exception {
-        final List<String> expected = List.of("pool-1-thread-1");
+        final String expected = "pool";
         final List<Integer> expectedThread = List.of(1,2,3,4,5,6,7,8,9,10);
 
         final SortedSet<String> resultThread = new TreeSet<>();
@@ -139,9 +140,8 @@ public class ParallelFluxTest {
 
         new CountDownLatch(1).await(2000, TimeUnit.MILLISECONDS);
 
-        Assert.assertEquals(expected.toString(), resultThreadSorted.toString());
+        Assert.assertEquals(resultThreadSorted.stream().filter(it -> it.substring(0,4).equals(expected)).count(), 1);
         Assert.assertEquals(expectedThread.toString(), resultSynchronize.toString());
-        Assert.assertEquals(expected.size(), resultThreadSorted.size());
         Assert.assertEquals(expectedThread.size(), resultSynchronize.size());
 
     }
@@ -175,6 +175,28 @@ public class ParallelFluxTest {
         Assert.assertEquals(expectedThread.toString(), resultSynchronize.toString());
         Assert.assertEquals(expected.size(), resultThreadSorted.size());
         Assert.assertEquals(expectedThread.size(), resultSynchronize.size());
+
+    }
+
+    @Test
+    public void groups() throws Exception {
+
+        final StringBuilder expectedThread = new StringBuilder().
+                append("0").
+                append("1").
+                append("2").
+                append("3").
+                append("4");
+
+        final StringBuilder result = new StringBuilder();
+
+        Flux.range(1, 10)
+                .parallel(5, 256)
+                .groups()
+                .toIterable()
+                .forEach(it -> result.append(it.key()));
+
+        Assert.assertEquals(expectedThread.toString(), result.toString());
 
     }
 }
