@@ -11,7 +11,7 @@
 * fromArray
 * fromStream
 * concatWith
-* firstEmitting
+* first
 * toIterable
 * subscribe
 * generate

@@ -328,7 +328,7 @@ public class FluxTest {
     }
 
     @Test
-    public void firstEmittingWithoutDelaySubcription() {
+    public void firstWithoutDelaySubcription() {
         String late = "oops I'm late";
         final List<String> first = List.of("let's get", "the party", "started");
 
@@ -354,7 +354,7 @@ public class FluxTest {
     }
 
     @Test
-    public void firstEmittingWithDelayElement() {
+    public void firstWithDelayElement() {
         String late = "oops I'm late";
         final List<String> first = List.of("let's get", "the party", "started");
 
