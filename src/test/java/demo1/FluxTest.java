@@ -343,7 +343,7 @@ public class FluxTest {
         Flux.firstEmitting(
                 Mono.just(late)
                         .delaySubscription(
-                                Duration.ofMillis(100)
+                                Duration.ofMillis(400)
                         ),
                 Flux.just(first)
                     .delayElements(Duration.ofMillis(33))
@@ -372,7 +372,7 @@ public class FluxTest {
                         ),
                 Flux.just(first)
                         .delayElements(
-                                Duration.ofMillis(33)
+                                Duration.ofMillis(400)
                         )
         )
          .toIterable()

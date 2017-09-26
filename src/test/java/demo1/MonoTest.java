@@ -8,6 +8,7 @@ import org.reactivestreams.Publisher;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.util.function.Tuple2;
+import reactor.util.function.Tuple3;
 
 import java.time.Duration;
 import java.util.ArrayList;
@@ -16,6 +17,7 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Function;
 
 /**
  * @author vicboma
@@ -258,9 +260,9 @@ public class MonoTest {
                 Mono.justOrEmpty(data)
         ).map(t ->
              new StringBuffer()
-                    .append(t.getT1())
-                    .append(t.getT2())
-                    .append(t.getT3())
+                    .append(t.getT1().toString())
+                    .append(t.getT2().toString())
+                    .append(t.getT3().toString())
                     .toString()
         ).subscribe(
                 result::append,
