@@ -10,6 +10,8 @@ import reactor.core.scheduler.Schedulers;
 
 import java.util.*;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
@@ -113,8 +115,8 @@ public class ParallelFluxTest {
     }
 
     @Test
-    public void inmediateWithSchedulers() throws Exception {
-        final List<String> expected = List.of("main");
+    public void fromExecutorsWithSchedulers() throws Exception {
+        final List<String> expected = List.of("pool-1-thread-1");
         final List<Integer> expectedThread = List.of(1,2,3,4,5,6,7,8,9,10);
 
         final SortedSet<String> resultThread = new TreeSet<>();
@@ -125,10 +127,42 @@ public class ParallelFluxTest {
 
         Flux.<Integer>range(1, 10)
                 .parallel(10)
-                .runOn(Schedulers.immediate())
+                .runOn(Schedulers.fromExecutor(Executors.newFixedThreadPool(1),true))
                 .subscribe(
                         i -> {
                             resultThreadSorted.add(Thread.currentThread().getName());
+                            resultSynchronize.add(i);
+                            System.out.println(Thread.currentThread().getName() + " -> " + i);
+                        },
+                        System.err::println
+                );
+
+        new CountDownLatch(1).await(2000, TimeUnit.MILLISECONDS);
+
+        Assert.assertEquals(expected.toString(), resultThreadSorted.toString());
+        Assert.assertEquals(expectedThread.toString(), resultSynchronize.toString());
+        Assert.assertEquals(expected.size(), resultThreadSorted.size());
+        Assert.assertEquals(expectedThread.size(), resultSynchronize.size());
+
+    }
+
+    @Test
+    public void fromExecutorServiceWithSchedulers() throws Exception {
+        final List<String> expected = List.of("ForkJoinPool-1-worker");
+        final List<Integer> expectedThread = List.of(1,2,3,4,5,6,7,8,9,10);
+
+        final SortedSet<String> resultThread = new TreeSet<>();
+        final Set<String>  resultThreadSorted = Collections.synchronizedSet(resultThread);
+
+        final SortedSet<Integer> result = new TreeSet<>();
+        final Set<Integer> resultSynchronize = Collections.synchronizedSet(result);
+
+        Flux.<Integer>range(1, 10)
+                .parallel()
+                .runOn(Schedulers.fromExecutorService(Executors.newWorkStealingPool(5)))
+                .subscribe(
+                        i -> {
+                            resultThreadSorted.add(Thread.currentThread().getName().substring(0,21));
                             resultSynchronize.add(i);
                             System.out.println(Thread.currentThread().getName() + " -> " + i);
                         },
