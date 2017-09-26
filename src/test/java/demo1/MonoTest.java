@@ -160,7 +160,7 @@ public class MonoTest {
                 Mono.just(expected)
                         .delayElement(Duration.ofMillis(500)),
                 Mono.just("World")
-                        .delayElement(Duration.ofMillis(501)))
+                        .delayElement(Duration.ofMillis(550)))
         );
 
         Assert.assertEquals(expected, result.block());
