@@ -55,6 +55,22 @@
 * fromCompletable 
 * zip
 
+## MonoProcessor - [Testing](https://github.com/vicboma1/Reactive-Programming-with-Reactor-Core/blob/master/src/test/java/demo1/MonoProcessorTest.java)
+
+* block
+* toFuture
+* subscribe
+* doOnSubscribe
+* doOnSuccess
+* doOnNext
+* doOnRequest
+* doOnEach
+* doOnTerminate
+* doOnError
+* downstreamCount
+* hasDownstreams
+
+
 ## Schedulers - [Testing](https://github.com/vicboma1/Reactive-Programming-with-Reactor-Core/blob/master/src/test/java/demo1/parallelFlux.java)
 
 * parallel
@@ -67,7 +83,6 @@
 
 * parallel
 * groups
-    
 
 ## ConnectableFlux - [Testing](https://github.com/vicboma1/Reactive-Programming-with-Reactor-Core/blob/master/src/test/java/demo1/connectableFlux.java)
 

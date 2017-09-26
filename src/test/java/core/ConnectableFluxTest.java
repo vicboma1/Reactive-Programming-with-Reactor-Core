@@ -1,4 +1,4 @@
-package demo1;
+package core;
 
 import org.junit.After;
 import org.junit.Assert;
@@ -6,8 +6,6 @@ import org.junit.Before;
 import org.junit.Test;
 import reactor.core.publisher.ConnectableFlux;
 import reactor.core.publisher.Flux;
-
-import java.util.List;
 
 /**
  * @author vicboma
