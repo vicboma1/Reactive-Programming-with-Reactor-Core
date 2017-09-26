@@ -57,7 +57,11 @@
 
 * wip
 
-## ParallelFlux
+## ParallelFlux with Schedulers
+
+* parallel
+    * elastic
+    * inmediate
 
 ## ConnectableFlux - [Testing](https://github.com/vicboma1/Reactive-Programming-with-Reactor-Core/blob/master/src/test/java/demo1/connectableFlux.java)
 
