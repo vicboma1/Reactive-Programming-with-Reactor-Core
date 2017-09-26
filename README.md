@@ -59,6 +59,11 @@
 
 ## ParallelFlux
 
+## ConnectableFlux
+
+* connect 
+* autoConnect
+
 ## Custom sources : Flux.create and FluxSink, Mono.create and MonoSink
 
 References
