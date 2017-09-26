@@ -71,7 +71,7 @@
 * hasDownstreams
 
 
-## Schedulers - [Testing](https://github.com/vicboma1/Reactive-Programming-with-Reactor-Core/blob/master/src/test/java/core/parallelFluxTest.java)
+## Schedulers - [Testing](https://github.com/vicboma1/Reactive-Programming-with-Reactor-Core/blob/master/src/test/java/core/ParallelFluxTest.java)
 
 * parallel
 * elastic
@@ -79,12 +79,12 @@
 * fromExecutor
 * fromExecutorService
 
-## ParallelFlux with Schedulers - [Testing](https://github.com/vicboma1/Reactive-Programming-with-Reactor-Core/blob/master/src/test/java/core/parallelFluxTest.java)
+## ParallelFlux with Schedulers - [Testing](https://github.com/vicboma1/Reactive-Programming-with-Reactor-Core/blob/master/src/test/java/core/ParallelFluxTest.java)
 
 * parallel
 * groups
 
-## ConnectableFlux - [Testing](https://github.com/vicboma1/Reactive-Programming-with-Reactor-Core/blob/master/src/test/java/core/connectableFluxTest.java)
+## ConnectableFlux - [Testing](https://github.com/vicboma1/Reactive-Programming-with-Reactor-Core/blob/master/src/test/java/core/ConnectableFluxTest.java)
 
 * connect 
 * autoConnect
