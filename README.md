@@ -3,38 +3,6 @@
 [![](https://travis-ci.org/vicboma1/Reactive-Programming-with-Reactor-Core.svg?branch=master)](https://travis-ci.org/vicboma1/Reactive-Programming-with-Reactor-Core)
 [![Coverage Status](https://coveralls.io/repos/github/vicboma1/Reactive-Programming-with-Reactor-Core/badge.svg?branch=master)](https://coveralls.io/github/vicboma1/Reactive-Programming-with-Reactor-Core?branch=master)  ![](https://img.shields.io/badge/Java-1.9-blue.svg)  ![](https://img.shields.io/badge/JUnit-4.11-orange.svg)
 
-## Flux - [Testing](https://github.com/vicboma1/Reactive-Programming-with-Reactor-Core/blob/master/src/test/java/demo1/FluxTest.java)
-
-* never
-* just
-* fromIterable
-* fromArray
-* fromStream
-* concatWith
-* first
-* toIterable
-* subscribe
-* generate
-* handle
-* using
-* range
-* doFinally
-* onError
-* doOnNext
-* doOnEach
-* elapse
-* retry
-* exceptions
-* retryWhen
-* try-catch
-* propagate
-* log
-* transform
-* compose
-* doOnNext
-* merge
-* mergeSequential
-
 ## Mono - [Testing](https://github.com/vicboma1/Reactive-Programming-with-Reactor-Core/blob/master/src/test/java/demo1/MonoTest.java)
 
 * just
@@ -69,6 +37,49 @@
 * doOnError
 * downstreamCount
 * hasDownstreams
+
+## Flux - [Testing](https://github.com/vicboma1/Reactive-Programming-with-Reactor-Core/blob/master/src/test/java/demo1/FluxTest.java)
+
+* never
+* just
+* fromIterable
+* fromArray
+* fromStream
+* concatWith
+* first
+* toIterable
+* subscribe
+* generate
+* handle
+* using
+* range
+* doFinally
+* onError
+* doOnNext
+* doOnEach
+* elapse
+* retry
+* exceptions
+* retryWhen
+* try-catch
+* propagate
+* log
+* transform
+* compose
+* merge
+* mergeSequential
+
+## EmitterProcessor - [Testing](https://github.com/vicboma1/Reactive-Programming-with-Reactor-Core/blob/master/src/test/java/emitterProcessor/EmitterProcessorTest.java)
+
+* next
+* subscriber
+* create
+* collectLits
+* doOnNext
+* doOnSubscribe
+* doOnEach
+* toFuture
+* onNext
 
 
 ## Schedulers - [Testing](https://github.com/vicboma1/Reactive-Programming-with-Reactor-Core/blob/master/src/test/java/demo1/parallelFlux.java)

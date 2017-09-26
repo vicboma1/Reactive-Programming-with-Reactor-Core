@@ -125,25 +125,25 @@ public class MonoProcessorTest {
         });
     }
 
-        /**
-         *
-         * @throws Exception
-         */
-        @Test
-        public void hasDownstreams() throws Exception {
+    /**
+     *
+     * @throws Exception
+     */
+    @Test
+    public void hasDownstreams() throws Exception {
 
-            SwingUtilities.invokeAndWait( ()->{
-                // Deferred is the publisher, Promise the consumer
-                final MonoProcessor<String> promise = MonoProcessor.create();
-                promise.subscribe(it -> {
-                    Assert.assertEquals(expected,it);
-                });
-
-                promise.onNext(expected);
-
-                Assert.assertFalse(promise.hasDownstreams());
-
+        SwingUtilities.invokeAndWait( ()->{
+            // Deferred is the publisher, Promise the consumer
+            final MonoProcessor<String> promise = MonoProcessor.create();
+            promise.subscribe(it -> {
+                Assert.assertEquals(expected,it);
             });
+
+            promise.onNext(expected);
+
+            Assert.assertFalse(promise.hasDownstreams());
+
+        });
     }
 
     /**
@@ -167,4 +167,5 @@ public class MonoProcessorTest {
 
         });
     }
+
 }
