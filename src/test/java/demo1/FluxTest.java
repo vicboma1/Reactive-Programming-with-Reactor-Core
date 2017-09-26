@@ -64,7 +64,7 @@ public class FluxTest {
     @Test
     public void never() throws Exception {
         final String expected = "FluxNever";
-        Assert.assertEquals(expected,Flux.never().toString());
+        Assert.assertEquals(expected, Flux.never().toString());
     }
 
 
@@ -80,9 +80,9 @@ public class FluxTest {
         final StringBuilder result = new StringBuilder();
 
         Flux.just(hello, world)
-            .subscribe(result::append);
+                .subscribe(result::append);
 
-        Assert.assertEquals(expected.toString(),result.toString());
+        Assert.assertEquals(expected.toString(), result.toString());
     }
 
     @Test
@@ -91,16 +91,16 @@ public class FluxTest {
         final StringBuilder result = new StringBuilder();
 
         Mono.just("[")
-             .concatWith(
-                     Flux.fromIterable(words)
-                         .filter(word -> !word.equals(dog))
-                         .flatMap(word -> Flux.just(word.concat(", ")))
-             )
-             .concatWith(Flux.just(dog,"]"))
-             .subscribe(result::append);
+                .concatWith(
+                        Flux.fromIterable(words)
+                                .filter(word -> !word.equals(dog))
+                                .flatMap(word -> Flux.just(word.concat(", ")))
+                )
+                .concatWith(Flux.just(dog, "]"))
+                .subscribe(result::append);
 
 
-        Assert.assertEquals(words.toString(),result.toString());
+        Assert.assertEquals(words.toString(), result.toString());
     }
 
     @Test
@@ -114,51 +114,51 @@ public class FluxTest {
                                 .filter(word -> !word.equals(dog))
                                 .flatMap(word -> Flux.just(word.concat(", ")))
                 )
-                .concatWith(Flux.just(dog,"]"))
+                .concatWith(Flux.just(dog, "]"))
                 .subscribe(
                         result::append,
                         throwable -> System.err.println(throwable.getMessage()),
                         () -> {
-                            Assert.assertEquals(words.toString(),result.toString());
+                            Assert.assertEquals(words.toString(), result.toString());
                         });
     }
 
     @Test
     public void findingMissingLetterFromArray() {
         final List<String> result = List.of(
-           " 1.a",
-           " 2.b",
-           " 3.d",
-           " 4.e",
-           " 5.f",
-           " 6.g",
-           " 7.h",
-           " 8.j",
-           " 9.l",
-           "10.m",
-           "11.n",
-           "12.o",
-           "13.p",
-           "14.r",
-           "15.t",
-           "16.u",
-           "17.v",
-           "18.w",
-           "19.x",
-           "20.y",
-           "21.z");
+                " 1.a",
+                " 2.b",
+                " 3.d",
+                " 4.e",
+                " 5.f",
+                " 6.g",
+                " 7.h",
+                " 8.j",
+                " 9.l",
+                "10.m",
+                "11.n",
+                "12.o",
+                "13.p",
+                "14.r",
+                "15.t",
+                "16.u",
+                "17.v",
+                "18.w",
+                "19.x",
+                "20.y",
+                "21.z");
 
         final List<String> expected = new ArrayList();
 
         Flux.fromIterable(words)
-            .flatMap(word -> Flux.fromArray(word.split("")))
-            .distinct()
-            .sort()
-            .zipWith(Flux.range(1, Integer.MAX_VALUE), (string, count) -> String.format("%2d.%s", count, string))
-            .subscribe(expected::add);
+                .flatMap(word -> Flux.fromArray(word.split("")))
+                .distinct()
+                .sort()
+                .zipWith(Flux.range(1, Integer.MAX_VALUE), (string, count) -> String.format("%2d.%s", count, string))
+                .subscribe(expected::add);
 
         result.stream()
-              .forEach(expected::remove);
+                .forEach(expected::remove);
 
         Assert.assertTrue(expected.isEmpty());
     }
@@ -244,7 +244,7 @@ public class FluxTest {
                 .subscribe(expected::add);
 
         result.stream()
-               .forEach(expected::remove);
+                .forEach(expected::remove);
 
         Assert.assertTrue(expected.isEmpty());
     }
@@ -287,7 +287,7 @@ public class FluxTest {
                 .subscribe(expected::add);
 
         result.stream()
-              .forEach(expected::remove);
+                .forEach(expected::remove);
 
         Assert.assertTrue(expected.isEmpty());
     }
@@ -296,13 +296,13 @@ public class FluxTest {
     public void subscribeNonBlocking() {
 
         Mono.just("Hello")
-            .concatWith(Mono.just("wo"))
-            .concatWith(Mono.just("rl"))
-            .concatWith(Mono.just("d!"))
-            .delayElements(Duration.ofMillis(500))
-            .subscribe(it ->{
-                 Assert.assertTrue(false);
-        });
+                .concatWith(Mono.just("wo"))
+                .concatWith(Mono.just("rl"))
+                .concatWith(Mono.just("d!"))
+                .delayElements(Duration.ofMillis(500))
+                .subscribe(it -> {
+                    Assert.assertTrue(false);
+                });
     }
 
     @Test
@@ -313,18 +313,18 @@ public class FluxTest {
         Mono.just("Hello")
                 .concatWith(
                         Mono.just("wo")
-                            .delayElement(Duration.ofMillis(100))
+                                .delayElement(Duration.ofMillis(100))
                 )
                 .concatWith(Mono.just("rl"))
                 .concatWith(
                         Mono.just("d!")
-                            .delayElement(Duration.ofMillis(500))
+                                .delayElement(Duration.ofMillis(500))
                 )
                 .delayElements(Duration.ofMillis(20))
                 .toStream()
                 .forEach(it -> result.append(it));
 
-        Assert.assertEquals(expected,result.toString());
+        Assert.assertEquals(expected, result.toString());
     }
 
     @Test
@@ -334,7 +334,7 @@ public class FluxTest {
 
         final StringBuilder expected = new StringBuilder()
                 .append(first.toString());
-                //.append(late);
+        //.append(late);
 
         final StringBuilder result = new StringBuilder();
 
@@ -344,12 +344,12 @@ public class FluxTest {
                                 Duration.ofMillis(100)
                         ),
                 Flux.just(first)
-                    .delayElements(Duration.ofMillis(33))
+                        .delayElements(Duration.ofMillis(33))
         )
-        .toIterable()
-        .forEach(result::append);
+                .toIterable()
+                .forEach(result::append);
 
-        Assert.assertEquals(expected.toString(),result.toString());
+        Assert.assertEquals(expected.toString(), result.toString());
 
     }
 
@@ -373,10 +373,10 @@ public class FluxTest {
                                 Duration.ofMillis(33)
                         )
         )
-         .toIterable()
-         .forEach(result::append);
+                .toIterable()
+                .forEach(result::append);
 
-        Assert.assertEquals(expected.toString(),result.toString());
+        Assert.assertEquals(expected.toString(), result.toString());
 
     }
 
@@ -398,19 +398,19 @@ public class FluxTest {
                 .append(30);
 
         Flux.generate(
-            () -> 0,
-            (state, sink) -> {
-                sink.next(3 * state);
-                if (state == 10)
-                    sink.complete();
-                return state + 1;
-            })
-            .subscribe(
-                    result::append,
-                    error -> System.err.println("CAUGHT " + error)
-            );
+                () -> 0,
+                (state, sink) -> {
+                    sink.next(3 * state);
+                    if (state == 10)
+                        sink.complete();
+                    return state + 1;
+                })
+                .subscribe(
+                        result::append,
+                        error -> System.err.println("CAUGHT " + error)
+                );
 
-        Assert.assertEquals(expected.toString(),result.toString());
+        Assert.assertEquals(expected.toString(), result.toString());
     }
 
     @Test
@@ -444,7 +444,7 @@ public class FluxTest {
                         error -> System.err.println("CAUGHT " + error)
                 );
 
-        Assert.assertEquals(expected.toString(),result.toString());
+        Assert.assertEquals(expected.toString(), result.toString());
     }
 
     private String alphabet(int letterNumber) {
@@ -464,21 +464,21 @@ public class FluxTest {
                 .append("P")
                 .append("T");
 
-        Flux.just(-1, 30, 15, 16, 20, 40,33)
-            .handle((i, sink) -> {
-                String letter = alphabet(i);
-                if( i == 40)
-                    sink.complete();
+        Flux.just(-1, 30, 15, 16, 20, 40, 33)
+                .handle((i, sink) -> {
+                    String letter = alphabet(i);
+                    if (i == 40)
+                        sink.complete();
 
-                if (letter != null)
-                    sink.next(letter);
-            })
-           .subscribe(
-                   result::append,
-                   error -> System.err.println("CAUGHT " + error)
-           );
+                    if (letter != null)
+                        sink.next(letter);
+                })
+                .subscribe(
+                        result::append,
+                        error -> System.err.println("CAUGHT " + error)
+                );
 
-        Assert.assertEquals(expected.toString(),result.toString());
+        Assert.assertEquals(expected.toString(), result.toString());
     }
 
     @Test
@@ -489,25 +489,25 @@ public class FluxTest {
         final AtomicBoolean isDisposed = new AtomicBoolean();
 
         Flux.using(
-            () -> new Disposable() {
-                @Override
-                public void dispose() {
-                    isDisposed.set(true);
-                }
+                () -> new Disposable() {
+                    @Override
+                    public void dispose() {
+                        isDisposed.set(true);
+                    }
 
-                @Override
-                public String toString() {
-                    return expected;
-                }
-            },
-            disposable -> Flux.just(disposable.toString()),
-            Disposable::dispose
+                    @Override
+                    public String toString() {
+                        return expected;
+                    }
+                },
+                disposable -> Flux.just(disposable.toString()),
+                Disposable::dispose
         ).subscribe(
                 result::append,
                 System.err::println
         );
 
-        Assert.assertEquals(expected,result.toString());
+        Assert.assertEquals(expected, result.toString());
         Assert.assertTrue(isDisposed.get());
 
     }
@@ -554,17 +554,17 @@ public class FluxTest {
 
         final String expected = "Error";
         Flux.interval(Duration.ofMillis(250))
-            .map(input -> {
-                if (input < 3)
-                    return "tick " + input;
+                .map(input -> {
+                    if (input < 3)
+                        return "tick " + input;
 
-                throw new RuntimeException("RuntimeException!!!!");
-            })
-            .onErrorReturn(expected)
-            .subscribe(
-                    result::add,
-                    System.err::println
-            );
+                    throw new RuntimeException("RuntimeException!!!!");
+                })
+                .onErrorReturn(expected)
+                .subscribe(
+                        result::add,
+                        System.err::println
+                );
 
         new CountDownLatch(1).await(2000, TimeUnit.MILLISECONDS);
 
@@ -573,7 +573,7 @@ public class FluxTest {
 
     @Test
     public void onErrorRetry() throws Exception {
-        final LinkedList<Tuple2<Long,String>> result = new LinkedList();
+        final LinkedList<Tuple2<Long, String>> result = new LinkedList();
         final int expected = 6;
 
         Flux.interval(Duration.ofMillis(250))
@@ -603,15 +603,15 @@ public class FluxTest {
         Flux.<String>error(new IllegalArgumentException())
                 .retryWhen(companion ->
                         companion.zipWith(Flux.range(1, 4),
-                                            (error, index) -> {
-                                                if (index < 4)
-                                                    return index;
-                                                else
-                                                    throw Exceptions.propagate(new Throwable("RuntimeException!!!!"));
-                                            })
+                                (error, index) -> {
+                                    if (index < 4)
+                                        return index;
+                                    else
+                                        throw Exceptions.propagate(new Throwable("RuntimeException!!!!"));
+                                })
                 )
-                .doOnError(it ->{
-                    Assert.assertEquals(expected,it.toString());
+                .doOnError(it -> {
+                    Assert.assertEquals(expected, it.toString());
                 });
 
     }
@@ -658,12 +658,12 @@ public class FluxTest {
                 .log()
                 .take(5)
                 .<Integer>handle(
-                    (i, sink) -> {
-                    if( i == 5)
-                        sink.complete();
+                        (i, sink) -> {
+                            if (i == 5)
+                                sink.complete();
 
-                        sink.next(Integer.valueOf(i * 2));
-                })
+                            sink.next(Integer.valueOf(i * 2));
+                        })
                 .collectList()
                 .subscribe(
                         it -> Assert.assertTrue(expected == it.stream().mapToInt(Integer::intValue).sum()),
@@ -683,7 +683,7 @@ public class FluxTest {
                                 .map(String::toUpperCase)
                 )
                 .toIterable()
-                .forEach( it -> Assert.assertTrue(expected.contains(it)));
+                .forEach(it -> Assert.assertTrue(expected.contains(it)));
     }
 
     @Test
@@ -708,10 +708,10 @@ public class FluxTest {
                         });
 
         composedFlux.toIterable()
-                .forEach( it -> Assert.assertTrue(expected1.contains(it)));
+                .forEach(it -> Assert.assertTrue(expected1.contains(it)));
 
         composedFlux.toIterable()
-                .forEach( it -> Assert.assertTrue(expected2.contains(it)));
+                .forEach(it -> Assert.assertTrue(expected2.contains(it)));
     }
 
 
@@ -721,9 +721,9 @@ public class FluxTest {
         final StringBuilder result = new StringBuilder();
 
         Flux.merge(Flux.fromIterable(Arrays.asList("blue", "green", "orange", "purple")))
-            .mergeWith(Flux.fromIterable(Arrays.asList("white", "red")))
-            .toIterable()
-            .forEach(result::append);
+                .mergeWith(Flux.fromIterable(Arrays.asList("white", "red")))
+                .toIterable()
+                .forEach(result::append);
 
         Assert.assertEquals(expected.toString(), result.toString());
 
@@ -741,17 +741,17 @@ public class FluxTest {
                 )
                         .delayElements(Duration.ofMillis(50))
         )
-            .mergeWith(
-                    Flux.just("red")
-            ).
+                .mergeWith(
+                        Flux.just("red")
+                ).
                 delayElements(Duration.ofMillis(40))
-            .mergeWith(
-                    Flux.fromIterable(
-                            Arrays.asList("white", "haze")
+                .mergeWith(
+                        Flux.fromIterable(
+                                Arrays.asList("white", "haze")
 
-                    ))
-            .toIterable()
-            .forEach(result::append);
+                        ))
+                .toIterable()
+                .forEach(result::append);
 
         Assert.assertEquals(expected.toString(), result.toString());
 

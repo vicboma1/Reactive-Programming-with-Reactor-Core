@@ -20,6 +20,8 @@
 * range
 * doFinally
 * onError
+* doOnNext
+* doOnEach
 * elapse
 * retry
 * exceptions
