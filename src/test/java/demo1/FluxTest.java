@@ -63,9 +63,7 @@ public class FluxTest {
 
     @Test
     public void never() throws Exception {
-
         final String expected = "FluxNever";
-
         Assert.assertEquals(expected,Flux.never().toString());
     }
 
@@ -340,10 +338,10 @@ public class FluxTest {
 
         final StringBuilder result = new StringBuilder();
 
-        Flux.firstEmitting(
+        Flux.first(
                 Mono.just(late)
                         .delaySubscription(
-                                Duration.ofMillis(400)
+                                Duration.ofMillis(100)
                         ),
                 Flux.just(first)
                     .delayElements(Duration.ofMillis(33))
@@ -365,14 +363,14 @@ public class FluxTest {
 
         final StringBuilder result = new StringBuilder();
 
-        Flux.firstEmitting(
+        Flux.first(
                 Mono.just(late)
                         .delayElement(
                                 Duration.ofMillis(20)
                         ),
                 Flux.just(first)
                         .delayElements(
-                                Duration.ofMillis(400)
+                                Duration.ofMillis(33)
                         )
         )
          .toIterable()

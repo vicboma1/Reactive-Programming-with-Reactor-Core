@@ -244,7 +244,7 @@ public class MonoTest {
     }
 
 
-    @Test
+  /*  @Test
     public void zipImpl() throws Exception{
 
         final String a = "A";
@@ -272,7 +272,7 @@ public class MonoTest {
 
         Assert.assertEquals(expected.toString(), result.toString());
     }
-
+*/
     @Test
     public void zip() throws Exception{
 
