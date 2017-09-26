@@ -66,6 +66,7 @@
 * log
 * transform
 * compose
+* doOnNext
 * merge
 * mergeSequential
 
