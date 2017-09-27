@@ -1,7 +1,7 @@
 # Reactive Programming with Reactor Core / WIP
 
 [![](https://travis-ci.org/vicboma1/Reactive-Programming-with-Reactor-Core.svg?branch=master)](https://travis-ci.org/vicboma1/Reactive-Programming-with-Reactor-Core)
-[![Coverage Status](https://coveralls.io/repos/github/vicboma1/Reactive-Programming-with-Reactor-Core/badge.svg?branch=master)](https://coveralls.io/github/vicboma1/Reactive-Programming-with-Reactor-Core?branch=master)  ![](https://img.shields.io/badge/Java-1.9-blue.svg)  ![](https://img.shields.io/badge/JUnit-4.11-orange.svg)
+[![Coverage Status](https://coveralls.io/repos/github/vicboma1/Reactive-Programming-with-Reactor-Core/badge.svg?branch=master)](https://coveralls.io/github/vicboma1/Reactive-Programming-with-Reactor-Core?branch=master) ![](https://img.shields.io/badge/Maven-4.0.0-green.svg)  ![](https://img.shields.io/badge/Java-1.9-blue.svg)  ![](https://img.shields.io/badge/JUnit-4.11-orange.svg)
 
 ## Mono - [Testing](https://github.com/vicboma1/Reactive-Programming-with-Reactor-Core/blob/master/src/test/java/demo1/MonoTest.java)
 
@@ -86,7 +86,7 @@
 * onNext
 
 
-## Schedulers - [Testing](https://github.com/vicboma1/Reactive-Programming-with-Reactor-Core/blob/master/src/test/java/demo1/parallelFlux.java)
+## Schedulers - [Testing](https://github.com/vicboma1/Reactive-Programming-with-Reactor-Core/blob/master/src/test/java/core/ParallelFluxTest.java)
 
 * parallel
 * elastic
@@ -94,12 +94,12 @@
 * fromExecutor
 * fromExecutorService
 
-## ParallelFlux with Schedulers - [Testing](https://github.com/vicboma1/Reactive-Programming-with-Reactor-Core/blob/master/src/test/java/demo1/parallelFlux.java)
+## ParallelFlux with Schedulers - [Testing](https://github.com/vicboma1/Reactive-Programming-with-Reactor-Core/blob/master/src/test/java/core/ParallelFluxTest.java)
 
 * parallel
 * groups
 
-## ConnectableFlux - [Testing](https://github.com/vicboma1/Reactive-Programming-with-Reactor-Core/blob/master/src/test/java/demo1/connectableFlux.java)
+## ConnectableFlux - [Testing](https://github.com/vicboma1/Reactive-Programming-with-Reactor-Core/blob/master/src/test/java/core/ConnectableFluxTest.java)
 
 * connect 
 * autoConnect
@@ -113,4 +113,5 @@ References
   * https://projectreactor.io/docs/core/release/api/
   * https://github.com/reactor/lite-rx-api-hands-on
   * https://www.infoq.com/articles/reactor-by-example/
+  * http://reactivex.io/documentation/operators.html
   
