@@ -47,7 +47,6 @@
 * fromStream
 * concatWith
 * first
-* take
 * toIterable
 * subscribe
 * generate
@@ -105,17 +104,11 @@
 
 * parallel
 * groups
-* runOn
-* from
-* sequential
-* dispose
 
 ## ConnectableFlux - [Testing](https://github.com/vicboma1/Reactive-Programming-with-Reactor-Core/blob/master/src/test/java/core/ConnectableFluxTest.java)
 
 * connect 
 * autoConnect
-
-## Custom sources : Flux.create and FluxSink, Mono.create and MonoSink
 
 References
   * https://github.com/vicboma1/Reactive-Programming-with-JDK-9-Flow-API 
