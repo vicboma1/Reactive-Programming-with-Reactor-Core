@@ -79,6 +79,7 @@
 * subscribeOn
 * cancelOn
 * prefetch
+* defer
 
 ## EmitterProcessor - [Testing](https://github.com/vicboma1/Reactive-Programming-with-Reactor-Core/blob/master/src/test/java/core/EmitterProcessorTest.java)
 

@@ -444,7 +444,7 @@ public class FluxTest {
 
 
     @Test
-    public void take() throws Exception{
+    public void take() throws Exception {
 
         final StringBuilder result = new StringBuilder();
 
@@ -463,10 +463,10 @@ public class FluxTest {
                     return state + 1;
                 })
                 .toStream()
-                .filter( it -> Integer.valueOf(it.toString()) <= 9)
+                .filter(it -> Integer.valueOf(it.toString()) <= 9)
                 .forEach(result::append);
 
-        new CountDownLatch(1).await(1000,TimeUnit.MILLISECONDS);
+        new CountDownLatch(1).await(1000, TimeUnit.MILLISECONDS);
 
         Assert.assertEquals(expected.toString(), result.toString());
     }
@@ -848,7 +848,7 @@ public class FluxTest {
     @Test
     public void publishOnIterable() throws Exception {
 
-        final CompletableFuture lock =  new CompletableFuture();
+        final CompletableFuture lock = new CompletableFuture();
         final StringBuilder expected = new StringBuilder().append("BLUE").append("WHITE").append("RED");
         final StringBuilder result = new StringBuilder();
 
@@ -867,13 +867,13 @@ public class FluxTest {
                             lock.complete(null);
                         }
                 )
-                .doFinally(it ->  LOG.info("doFinally: {}",it))
-                .doOnError(it -> LOG.error("doOnError: "+it.getMessage(),it))
-                .doOnCancel(() ->  LOG.info("doOnCancel"))
+                .doFinally(it -> LOG.info("doFinally: {}", it))
+                .doOnError(it -> LOG.error("doOnError: " + it.getMessage(), it))
+                .doOnCancel(() -> LOG.info("doOnCancel"))
                 .map(String::toUpperCase)
                 .toIterable()
                 .forEach(
-                        value ->  {
+                        value -> {
                             LOG.info("Consumed : {}", value);
                             result.append(value);
                         }
@@ -889,7 +889,7 @@ public class FluxTest {
     @Test
     public void subscribeOnToStream() throws Exception {
 
-        final CompletableFuture lock =  new CompletableFuture();
+        final CompletableFuture lock = new CompletableFuture();
         final StringBuilder expected = new StringBuilder().append("BLUE").append("WHITE").append("RED");
         final StringBuilder result = new StringBuilder();
 
@@ -911,17 +911,17 @@ public class FluxTest {
                             lock.complete(null);
                         }
                 )
-                .doFinally(it ->  LOG.info("doFinally: {}",it))
-                .doOnError(it -> LOG.error("doOnError: "+it.getMessage(),it))
-                .doOnCancel(() ->  LOG.info("doOnCancel"))
+                .doFinally(it -> LOG.info("doFinally: {}", it))
+                .doOnError(it -> LOG.error("doOnError: " + it.getMessage(), it))
+                .doOnCancel(() -> LOG.info("doOnCancel"))
                 .map(String::toUpperCase)
                 .toStream()
                 .forEach(
-                value ->  {
-                    LOG.info("Consumed : {}", value);
-                    result.append(value);
-                }
-        );
+                        value -> {
+                            LOG.info("Consumed : {}", value);
+                            result.append(value);
+                        }
+                );
 
         lock.get();
 
@@ -934,30 +934,30 @@ public class FluxTest {
     @Test
     public void subscribeOnNonBlocking() throws Exception {
 
-        final CompletableFuture lock =  new CompletableFuture();
+        final CompletableFuture lock = new CompletableFuture();
         final StringBuilder expected = new StringBuilder().append("BLUE 1").append("WHITE 1").append("RED 1").append("BLUE 2").append("WHITE 2").append("RED 2");
         final StringBuilder result = new StringBuilder();
 
-        Flux.just("blue 1", "white 1", "red 1","blue 2", "white 2", "red 2")
+        Flux.just("blue 1", "white 1", "red 1", "blue 2", "white 2", "red 2")
                 .publishOn(
                         Schedulers.parallel(),
                         3
                 )
                 .subscribeOn(
-                        Schedulers.parallel(),false
+                        Schedulers.parallel(), false
                 )
                 .log()
                 .doOnEach(it -> LOG.info("doOnEach: " + it))
                 .doOnSubscribe(it -> LOG.info("doOnSubscribe: " + it))
                 .doOnComplete(() -> LOG.info("doOnComplete!!!"))
-                .doAfterTerminate(() ->  LOG.info("doAfterTerminate"))
+                .doAfterTerminate(() -> LOG.info("doAfterTerminate"))
                 .map(String::toUpperCase)
                 .subscribe(
-                        value ->  {
+                        value -> {
                             LOG.info("Consumed : {}", value);
                             result.append(value);
                         },
-                        throwable -> LOG.error("Error : {}",throwable),
+                        throwable -> LOG.error("Error : {}", throwable),
                         () -> {
                             LOG.info("Completed consumer!!!");
                             lock.complete(null);
@@ -975,11 +975,11 @@ public class FluxTest {
     @Test
     public void subscribeOnCompletableAsync() throws Exception {
 
-        final List<CompletableFuture> promises =  new LinkedList();
-        final List<String>  expected = List.of("BLUE 1","WHITE 1","RED 1","BLUE 2","WHITE 2","RED 2");
+        final List<CompletableFuture> promises = new LinkedList();
+        final List<String> expected = List.of("BLUE 1", "WHITE 1", "RED 1", "BLUE 2", "WHITE 2", "RED 2");
         final List<String> result = new ArrayList<>();
 
-        Flux.just("blue 1", "white 1", "red 1","blue 2", "white 2", "red 2")
+        Flux.just("blue 1", "white 1", "red 1", "blue 2", "white 2", "red 2")
                 .publishOn(
                         Schedulers.parallel(),
                         3
@@ -993,17 +993,17 @@ public class FluxTest {
                 .forEach(
                         value ->
                                 promises.add(
-                                    CompletableFuture.runAsync(() ->{
-                                        result.add(value);
-                                        LOG.info("Consumed : {}", value);
-                                    })
+                                        CompletableFuture.runAsync(() -> {
+                                            result.add(value);
+                                            LOG.info("Consumed : {}", value);
+                                        })
                                 )
-                        );
+                );
 
         CompletableFuture.allOf(promises.toArray(new CompletableFuture[promises.size()]))
-                         .get();
+                .get();
 
-        Assert.assertEquals(result.size() , expected.size());
+        Assert.assertEquals(result.size(), expected.size());
 
 
         for (int i = 0; i < expected.size(); i++) {
@@ -1011,6 +1011,45 @@ public class FluxTest {
         }
 
     }
+
+    //========================================================================================
+
+    @Test
+    public void defer() throws Exception {
+
+        final List<Integer> expected = List.of(1,2,3,4,5,6,8,9);
+        final List<Integer> result = new ArrayList<>();
+
+        Flux.defer(
+                () -> Flux.fromIterable(expected)
+        )
+        .subscribeOn(Schedulers.elastic())
+        .toStream()
+        .forEach(result::add);
+
+        Assert.assertEquals(expected.toString(),result.toString());
+    }
+
+    //========================================================================================
+
+    @Test
+    public void then() throws Exception {
+
+        final List<Integer> expected = List.of(1,2,3,4,5,6,8,9);
+        final List<Integer> result = new ArrayList<>();
+
+        Flux.fromIterable(expected)
+                .subscribeOn(Schedulers.elastic())
+                .publishOn(Schedulers.parallel())
+                .doOnNext(it -> result.add(it))
+                .then()
+                .block();
+
+        Assert.assertEquals(expected.toString(),result.toString());
+
+    }
+
+
+
 }
 
-/**/
