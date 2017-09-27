@@ -58,6 +58,11 @@
 * doOnNext
 * doOnEach
 * doOnCompleted
+* doAfterTerminate
+* doOnTerminate
+* doFinally
+* doOnCancel
+* doOnSubscribe
 * elapse
 * retry
 * exceptions
@@ -71,6 +76,7 @@
 * mergeSequential
 * publishOn
 * subscribeOn
+* cancelOn
 * prefetch
 
 ## EmitterProcessor - [Testing](https://github.com/vicboma1/Reactive-Programming-with-Reactor-Core/blob/master/src/test/java/core/EmitterProcessorTest.java)

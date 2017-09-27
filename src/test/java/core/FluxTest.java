@@ -17,6 +17,7 @@ import reactor.util.function.Tuple2;
 import java.io.IOException;
 import java.time.Duration;
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -812,23 +813,168 @@ public class FluxTest {
     //========================================================================================
 
     @Test
-    public void publishOn() throws Exception {
+    public void publishOnIterable() throws Exception {
+
+        final CompletableFuture lock =  new CompletableFuture();
+        final StringBuilder expected = new StringBuilder().append("BLUE").append("WHITE").append("RED");
+        final StringBuilder result = new StringBuilder();
 
         Flux.just("blue", "white", "red")
+                .log()
                 .doOnEach(it -> LOG.info("doOnEach: " + it))
                 .doOnSubscribe(it -> LOG.info("doOnSubscribe: " + it))
-                .doOnComplete(() -> LOG.info("doOnComplete!!!"))
+                .doOnComplete(() -> LOG.info("doOnComplete"))
+                .doOnTerminate(() -> LOG.info("doOnTerminate"))
+                .doAfterTerminate(() -> {
+                            LOG.info("doAfterTerminate");
+                            lock.complete(null);
+                        }
+                     )
+                .doFinally(it ->  LOG.info("doFinally: {}",it))
+                .doOnError(it -> LOG.error("doOnError: "+it.getMessage(),it))
+                .doOnCancel(() ->  LOG.info("doOnCancel"))
                 .map(String::toUpperCase)
-                .subscribeOn(
-                        Schedulers.parallel()
-                )
                 .publishOn(
                         Schedulers.parallel(),
                         2
                 )
+                .toIterable()
+                .forEach(
+                        value ->  {
+                            LOG.info("Consumed : {}", value);
+                            result.append(value);
+                        }
+                );
+
+        lock.get();
+
+        Assert.assertEquals(expected.toString(), result.toString());
+    }
+
+    //========================================================================================
+
+    @Test
+    public void subscribeOnToStream() throws Exception {
+
+        final CompletableFuture lock =  new CompletableFuture();
+        final StringBuilder expected = new StringBuilder().append("BLUE").append("WHITE").append("RED");
+        final StringBuilder result = new StringBuilder();
+
+        Flux.just("blue", "white", "red")
+                .log()
+                .doOnEach(it -> LOG.info("doOnEach: " + it))
+                .doOnSubscribe(it -> LOG.info("doOnSubscribe: " + it))
+                .doOnComplete(() -> LOG.info("doOnComplete"))
+                .doOnTerminate(() -> LOG.info("doOnTerminate"))
+                .doAfterTerminate(() -> {
+                            LOG.info("doAfterTerminate");
+                            lock.complete(null);
+                        }
+                )
+                .doFinally(it ->  LOG.info("doFinally: {}",it))
+                .doOnError(it -> LOG.error("doOnError: "+it.getMessage(),it))
+                .doOnCancel(() ->  LOG.info("doOnCancel"))
+                .map(String::toUpperCase)
+                .publishOn(
+                        Schedulers.parallel(),
+                        2
+                )
+                .subscribeOn(
+                        Schedulers.parallel()
+                )
                 .toStream()
-                .forEach(value -> {
-                    LOG.info("Consumed: " + value);
-                });
+                .forEach(
+                value ->  {
+                    LOG.info("Consumed : {}", value);
+                    result.append(value);
+                }
+        );
+
+        lock.get();
+
+        Assert.assertEquals(expected.toString(), result.toString());
+
+    }
+
+    //========================================================================================
+
+    @Test
+    public void subscribeOnNonBlocking() throws Exception {
+
+        final CompletableFuture lock =  new CompletableFuture();
+        final StringBuilder expected = new StringBuilder().append("BLUE 1").append("WHITE 1").append("RED 1").append("BLUE 2").append("WHITE 2").append("RED 2");
+        final StringBuilder result = new StringBuilder();
+
+        Flux.just("blue 1", "white 1", "red 1","blue 2", "white 2", "red 2")
+                .log()
+                .doOnEach(it -> LOG.info("doOnEach: " + it))
+                .doOnSubscribe(it -> LOG.info("doOnSubscribe: " + it))
+                .doOnComplete(() -> LOG.info("doOnComplete!!!"))
+                .doAfterTerminate(() ->  LOG.info("doAfterTerminate"))
+                .map(String::toUpperCase)
+                .publishOn(
+                        Schedulers.parallel(),
+                        3
+                )
+                .subscribeOn(
+                        Schedulers.parallel(),false
+                )
+                .subscribe(
+                        value ->  {
+                            LOG.info("Consumed : {}", value);
+                            result.append(value);
+                        },
+                        throwable -> LOG.error("Error : {}",throwable),
+                        () -> {
+                            LOG.info("Completed consumer!!!");
+                            lock.complete(null);
+                        }
+                );
+
+        lock.get();
+
+        Assert.assertEquals(expected.toString(), result.toString());
+
+    }
+
+    //========================================================================================
+
+    @Test
+    public void subscribeOnCompletableAsync() throws Exception {
+
+        final List<CompletableFuture> promises =  new LinkedList();
+        final List<String>  expected = List.of("BLUE 1","WHITE 1","RED 1","BLUE 2","WHITE 2","RED 2");
+        final List<String> result = new ArrayList<>();
+
+        Flux.just("blue 1", "white 1", "red 1","blue 2", "white 2", "red 2")
+                .doOnEach(it -> LOG.info("doOnEach: " + it))
+                .map(String::toUpperCase)
+                .publishOn(
+                        Schedulers.parallel(),
+                        3
+                )
+                .subscribeOn(
+                        Schedulers.parallel()
+                )
+                .toStream()
+                .forEach(
+                        value ->
+                                promises.add(
+                                    CompletableFuture.runAsync(() ->{
+                                        result.add(value);
+                                        LOG.info("Consumed : {}", value);
+                                    })
+                                )
+                        );
+
+        CompletableFuture.allOf(promises.toArray(new CompletableFuture[promises.size()]))
+                         .get();
+
+        for (int i = 0; i < expected.size(); i++) {
+            Assert.assertTrue(result.contains(expected.get(i)));
+        }
+
     }
 }
+
+/**/
