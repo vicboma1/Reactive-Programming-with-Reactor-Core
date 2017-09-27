@@ -1,4 +1,4 @@
-package mono;
+package core;
 
 import org.junit.After;
 import org.junit.Assert;
