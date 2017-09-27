@@ -970,6 +970,9 @@ public class FluxTest {
         CompletableFuture.allOf(promises.toArray(new CompletableFuture[promises.size()]))
                          .get();
 
+        Assert.assertEquals(result.size() , expected.size());
+
+
         for (int i = 0; i < expected.size(); i++) {
             Assert.assertTrue(result.contains(expected.get(i)));
         }

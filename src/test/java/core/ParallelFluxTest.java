@@ -4,18 +4,20 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import reactor.core.publisher.Flux;
 import reactor.core.scheduler.Schedulers;
 
 import java.util.*;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 
 /**
  * @author vicboma
  */
 public class ParallelFluxTest {
+
+    static final Logger LOG = LoggerFactory.getLogger(ParallelFluxTest.class);
 
     @Before
     public void setUp() throws Exception {
@@ -206,6 +208,59 @@ public class ParallelFluxTest {
         Assert.assertEquals(expectedThread.toString(), result.toString());
 
     }
+
+    //========================================================================================
+
+    @Test
+    public void completableAsync() throws Exception {
+
+        final CompletableFuture lock  =  new CompletableFuture();
+        final List<CompletableFuture> promises =  new LinkedList();
+        final List<String>  expected = List.of("BLUE 1","WHITE 1","RED 1","BLUE 2","WHITE 2","RED 2");
+        final List<String> result = new ArrayList<>();
+
+        Flux.just("blue 1", "white 1", "red 1","blue 2", "white 2", "red 2")
+                .doOnEach(it -> LOG.info("doOnEach: " + it))
+                .parallel()
+                .runOn(Schedulers.parallel())
+                .map(String::toUpperCase)
+                .subscribe(
+                        value ->  {
+                            promises.add(
+                                    CompletableFuture.runAsync(() ->{
+                                        result.add(value);
+                                        LOG.info("Consumed : {}", value);
+                                    })
+                            );
+                        },
+                        throwable -> LOG.error("Error : {}",throwable),
+                        () -> {
+
+                            LOG.info("Completed consumer!!!");
+
+                            try {
+                                CompletableFuture.allOf(promises.toArray(new CompletableFuture[promises.size()]))
+                                        .get();
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            } catch (ExecutionException e) {
+                                e.printStackTrace();
+                            }
+
+                            Assert.assertEquals(promises.size() ,expected.size());
+
+                            for (int i = 0; i < expected.size(); i++) {
+                                Assert.assertTrue(result.contains(expected.get(i)));
+                            }
+
+                            lock.complete(null);
+                        }
+                );
+
+        lock.get();
+
+    }
+
 }
 
 
