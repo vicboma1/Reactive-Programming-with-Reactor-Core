@@ -229,13 +229,13 @@ public class ParallelFluxTest {
         final List<String> result = new ArrayList<>();
 
         final Disposable disposable = Flux.just("blue 1", "white 1", "red 1","blue 2", "white 2", "red 2")
-                .doOnEach(it -> LOG.info("doOnEach: " + it))
-                .doOnNext(it -> LOG.info("doOnNext: " + it))
-                .doOnSubscribe(it -> LOG.info("doOnSubscribe: " + it))
                 //.subscribeOn(Schedulers.parallel())
                 //.publishOn(Schedulers.parallel())
                 .parallel()
                 .runOn(Schedulers.parallel())
+                .doOnEach(it -> LOG.info("doOnEach: " + it))
+                .doOnNext(it -> LOG.info("doOnNext: " + it))
+                .doOnSubscribe(it -> LOG.info("doOnSubscribe: " + it))
                 .map(String::toUpperCase)
                 .subscribe(
                         value ->  {

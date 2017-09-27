@@ -853,6 +853,10 @@ public class FluxTest {
         final StringBuilder result = new StringBuilder();
 
         Flux.just("blue", "white", "red")
+                .publishOn(
+                        Schedulers.parallel(),
+                        2
+                )
                 .log()
                 .doOnEach(it -> LOG.info("doOnEach: " + it))
                 .doOnSubscribe(it -> LOG.info("doOnSubscribe: " + it))
@@ -862,15 +866,11 @@ public class FluxTest {
                             LOG.info("doAfterTerminate");
                             lock.complete(null);
                         }
-                     )
+                )
                 .doFinally(it ->  LOG.info("doFinally: {}",it))
                 .doOnError(it -> LOG.error("doOnError: "+it.getMessage(),it))
                 .doOnCancel(() ->  LOG.info("doOnCancel"))
                 .map(String::toUpperCase)
-                .publishOn(
-                        Schedulers.parallel(),
-                        2
-                )
                 .toIterable()
                 .forEach(
                         value ->  {
@@ -894,6 +894,13 @@ public class FluxTest {
         final StringBuilder result = new StringBuilder();
 
         Flux.just("blue", "white", "red")
+                .publishOn(
+                        Schedulers.parallel(),
+                        2
+                )
+                .subscribeOn(
+                        Schedulers.parallel()
+                )
                 .log()
                 .doOnEach(it -> LOG.info("doOnEach: " + it))
                 .doOnSubscribe(it -> LOG.info("doOnSubscribe: " + it))
@@ -908,13 +915,6 @@ public class FluxTest {
                 .doOnError(it -> LOG.error("doOnError: "+it.getMessage(),it))
                 .doOnCancel(() ->  LOG.info("doOnCancel"))
                 .map(String::toUpperCase)
-                .publishOn(
-                        Schedulers.parallel(),
-                        2
-                )
-                .subscribeOn(
-                        Schedulers.parallel()
-                )
                 .toStream()
                 .forEach(
                 value ->  {
@@ -939,12 +939,6 @@ public class FluxTest {
         final StringBuilder result = new StringBuilder();
 
         Flux.just("blue 1", "white 1", "red 1","blue 2", "white 2", "red 2")
-                .log()
-                .doOnEach(it -> LOG.info("doOnEach: " + it))
-                .doOnSubscribe(it -> LOG.info("doOnSubscribe: " + it))
-                .doOnComplete(() -> LOG.info("doOnComplete!!!"))
-                .doAfterTerminate(() ->  LOG.info("doAfterTerminate"))
-                .map(String::toUpperCase)
                 .publishOn(
                         Schedulers.parallel(),
                         3
@@ -952,6 +946,12 @@ public class FluxTest {
                 .subscribeOn(
                         Schedulers.parallel(),false
                 )
+                .log()
+                .doOnEach(it -> LOG.info("doOnEach: " + it))
+                .doOnSubscribe(it -> LOG.info("doOnSubscribe: " + it))
+                .doOnComplete(() -> LOG.info("doOnComplete!!!"))
+                .doAfterTerminate(() ->  LOG.info("doAfterTerminate"))
+                .map(String::toUpperCase)
                 .subscribe(
                         value ->  {
                             LOG.info("Consumed : {}", value);
@@ -980,8 +980,6 @@ public class FluxTest {
         final List<String> result = new ArrayList<>();
 
         Flux.just("blue 1", "white 1", "red 1","blue 2", "white 2", "red 2")
-                .doOnEach(it -> LOG.info("doOnEach: " + it))
-                .map(String::toUpperCase)
                 .publishOn(
                         Schedulers.parallel(),
                         3
@@ -989,6 +987,8 @@ public class FluxTest {
                 .subscribeOn(
                         Schedulers.parallel()
                 )
+                .doOnEach(it -> LOG.info("doOnEach: " + it))
+                .map(String::toUpperCase)
                 .toStream()
                 .forEach(
                         value ->

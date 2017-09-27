@@ -5,6 +5,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import reactor.core.publisher.Mono;
+import reactor.core.scheduler.Schedulers;
 
 import java.time.Duration;
 import java.util.List;
@@ -334,5 +335,32 @@ public class MonoTest {
                 });
 
         Assert.assertEquals(expected.toString(), result.toString());
+    }
+
+
+    @Test
+    public void publishOn () throws Exception {
+
+        Mono.fromCallable( () -> System.currentTimeMillis() )
+                .repeat()
+                .publishOn(Schedulers.parallel())
+                .flatMap(time ->
+                    Mono.fromCallable(() -> {
+                            new CountDownLatch(1).await(100,TimeUnit.MILLISECONDS);
+                            return time;
+                        }
+                    )
+                    .subscribeOn(Schedulers.parallel()),
+            10
+                )
+                .log()
+                .collectList()
+                .subscribe(System.out::println,
+                            System.err::println,
+                            () -> {
+                                System.out.println("Completed subscribe");
+                            });
+
+        new CountDownLatch(1).await(2000,TimeUnit.MILLISECONDS);
     }
 }

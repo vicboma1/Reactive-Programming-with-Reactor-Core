@@ -4,8 +4,14 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import reactor.core.Disposable;
 import reactor.core.publisher.ConnectableFlux;
 import reactor.core.publisher.Flux;
+
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
+
+import static java.time.Duration.ofSeconds;
 
 /**
  * @author vicboma
@@ -181,4 +187,5 @@ public class ConnectableFluxTest {
         Assert.assertEquals(expected.toString(),result.toString());
 
     }
+
 }

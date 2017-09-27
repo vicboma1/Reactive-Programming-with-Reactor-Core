@@ -1,4 +1,4 @@
-# Reactive Programming with Reactor Core / WIP
+# Reactive Programming with Reactor Core  - 67 Test
 
 [![](https://travis-ci.org/vicboma1/Reactive-Programming-with-Reactor-Core.svg?branch=master)](https://travis-ci.org/vicboma1/Reactive-Programming-with-Reactor-Core)
 [![Coverage Status](https://coveralls.io/repos/github/vicboma1/Reactive-Programming-with-Reactor-Core/badge.svg?branch=master)](https://coveralls.io/github/vicboma1/Reactive-Programming-with-Reactor-Core?branch=master) ![](https://img.shields.io/badge/Maven-4.0.0-green.svg)  ![](https://img.shields.io/badge/Java-1.9-blue.svg)  ![](https://img.shields.io/badge/JUnit-4.11-orange.svg)
@@ -105,6 +105,8 @@
 
 * parallel
 * groups
+* filter
+* collectList
 * runOn
 * from
 * sequential
@@ -114,6 +116,10 @@
 
 * connect 
 * autoConnect
+* publish
+* subscribe
+* sample
+* create
 
 References
   * https://github.com/vicboma1/Reactive-Programming-with-JDK-9-Flow-API 

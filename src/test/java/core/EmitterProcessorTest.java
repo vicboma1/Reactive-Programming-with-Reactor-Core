@@ -7,6 +7,10 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import reactor.core.publisher.EmitterProcessor;
+import reactor.core.publisher.Mono;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class EmitterProcessorTest {
 
@@ -33,6 +37,46 @@ public class EmitterProcessorTest {
         final EmitterProcessor<String> stream = EmitterProcessor.<String>create();
 
         Assert.assertEquals(expected, stream.getClass().getName());
+    }
+
+    //========================================================================================
+
+    @Test
+    public void filter() throws Exception {
+        final String filter = "World";
+
+        final String expected1 = "Hello "+filter+"!";
+        final String expected2 = "Goodbye "+filter+"!";
+
+        final List<String> expected = List.of(expected1,expected2);
+        final List<String> result = new ArrayList<>();
+
+        EmitterProcessor<String> emitter;
+
+        (emitter = EmitterProcessor.create())
+                .filter(s -> s.endsWith(filter + "!"))
+                .doOnNext(s -> LOG.info("Filtered String {}", s))
+                .collectList()
+                .subscribe(
+                        it -> {
+                            LOG.info("Consumer: {}",it);
+                            result.addAll(it);
+                        },
+                        it -> {
+                            LOG.error("Error {}", it);
+                            Assert.assertTrue(false);
+                        },
+                        () ->{
+                            LOG.info("Completed Consumer");
+                        });
+
+        emitter.onNext(expected1);
+        emitter.onNext(expected2);
+        emitter.onNext("World");
+        emitter.onComplete();
+
+        Assert.assertEquals(expected.toString(),result.toString());
+
     }
 
     //========================================================================================
