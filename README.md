@@ -57,6 +57,7 @@
 * onError
 * doOnNext
 * doOnEach
+* doOnCompleted
 * elapse
 * retry
 * exceptions
@@ -66,7 +67,6 @@
 * log
 * transform
 * compose
-* doOnNext
 * merge
 * mergeSequential
 * publishOn
