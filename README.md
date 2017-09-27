@@ -104,6 +104,10 @@
 
 * parallel
 * groups
+* runOn
+* from
+* sequential
+* dispose
 
 ## ConnectableFlux - [Testing](https://github.com/vicboma1/Reactive-Programming-with-Reactor-Core/blob/master/src/test/java/core/ConnectableFluxTest.java)
 

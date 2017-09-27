@@ -266,6 +266,7 @@ public class MonoTest {
                         Mono.fromFuture(expected)
                 )
                 .subscribe(result::append);
+
         expected.get();
 
         Assert.assertEquals("MonoCompletionStage", result.toString());

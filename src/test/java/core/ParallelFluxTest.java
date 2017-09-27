@@ -6,7 +6,9 @@ import org.junit.Before;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import reactor.core.Disposable;
 import reactor.core.publisher.Flux;
+import reactor.core.scheduler.Scheduler;
 import reactor.core.scheduler.Schedulers;
 
 import java.util.*;
@@ -191,25 +193,29 @@ public class ParallelFluxTest {
     public void groups() throws Exception {
 
         final StringBuilder expectedThread = new StringBuilder().
-                append("0").
-                append("1").
-                append("2").
-                append("3").
-                append("4");
+                append("0a").
+                append("1b").
+                append("2c").
+                append("3d").
+                append("4e");
 
         final StringBuilder result = new StringBuilder();
 
-        Flux.range(1, 10)
+        Flux.just("a","b","c","d","e")
                 .parallel(5, 256)
+                .runOn(Schedulers.parallel())
                 .groups()
                 .toIterable()
-                .forEach(it -> result.append(it.key()));
+                .forEach(it -> result.append(it.key()+""+it.single().block()));
 
         Assert.assertEquals(expectedThread.toString(), result.toString());
 
     }
 
     //========================================================================================
+
+    //subscribeOn -> Subscribes to this ParallelFlux by providing an onNext, onError, onComplete and onSubscribe callback and triggers the execution chain for all 'rails'.
+    //publishOn  -> Run onNext, onComplete and onError on a supplied Scheduler Scheduler.Worker.
 
     @Test
     public void completableAsync() throws Exception {
@@ -219,8 +225,12 @@ public class ParallelFluxTest {
         final List<String>  expected = List.of("BLUE 1","WHITE 1","RED 1","BLUE 2","WHITE 2","RED 2");
         final List<String> result = new ArrayList<>();
 
-        Flux.just("blue 1", "white 1", "red 1","blue 2", "white 2", "red 2")
+        final Disposable disposable = Flux.just("blue 1", "white 1", "red 1","blue 2", "white 2", "red 2")
                 .doOnEach(it -> LOG.info("doOnEach: " + it))
+                .doOnNext(it -> LOG.info("doOnNext: " + it))
+                .doOnSubscribe(it -> LOG.info("doOnSubscribe: " + it))
+                //.subscribeOn(Schedulers.parallel())
+                //.publishOn(Schedulers.parallel())
                 .parallel()
                 .runOn(Schedulers.parallel())
                 .map(String::toUpperCase)
@@ -257,8 +267,11 @@ public class ParallelFluxTest {
                         }
                 );
 
+
         lock.get();
 
+        if(!disposable.isDisposed())
+            disposable.dispose();
     }
 
 }
