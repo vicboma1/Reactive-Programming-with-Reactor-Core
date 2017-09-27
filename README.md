@@ -110,4 +110,5 @@ References
   * https://projectreactor.io/docs/core/release/api/
   * https://github.com/reactor/lite-rx-api-hands-on
   * https://www.infoq.com/articles/reactor-by-example/
+  * http://reactivex.io/documentation/operators.html
   
