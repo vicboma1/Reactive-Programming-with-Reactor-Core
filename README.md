@@ -83,7 +83,7 @@
 * onNext
 
 
-## Schedulers - [Testing](https://github.com/vicboma1/Reactive-Programming-with-Reactor-Core/blob/master/src/test/java/core/ParallelFlux.java)
+## Schedulers - [Testing](https://github.com/vicboma1/Reactive-Programming-with-Reactor-Core/blob/master/src/test/java/core/ParallelFluxTest.java)
 
 * parallel
 * elastic
@@ -91,7 +91,7 @@
 * fromExecutor
 * fromExecutorService
 
-## ParallelFlux with Schedulers - [Testing](https://github.com/vicboma1/Reactive-Programming-with-Reactor-Core/blob/master/src/test/java/core/ParallelFlux.java)
+## ParallelFlux with Schedulers - [Testing](https://github.com/vicboma1/Reactive-Programming-with-Reactor-Core/blob/master/src/test/java/core/ParallelFluxTest.java)
 
 * parallel
 * groups
