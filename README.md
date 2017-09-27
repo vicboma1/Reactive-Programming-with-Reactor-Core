@@ -47,6 +47,7 @@
 * fromStream
 * concatWith
 * first
+* take
 * toIterable
 * subscribe
 * generate

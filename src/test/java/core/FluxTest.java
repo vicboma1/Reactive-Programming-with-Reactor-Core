@@ -19,6 +19,7 @@ import java.time.Duration;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -440,6 +441,38 @@ public class FluxTest {
     }
 
     //========================================================================================
+
+
+    @Test
+    public void take() throws Exception{
+
+        final StringBuilder result = new StringBuilder();
+
+        final StringBuilder expected = new StringBuilder()
+                .append(0)
+                .append(3)
+                .append(6)
+                .append(9);
+
+        Flux.generate(
+                () -> 0,
+                (state, sink) -> {
+                    sink.next(3 * state);
+                    if (state == 10)
+                        sink.complete();
+                    return state + 1;
+                })
+                .toStream()
+                .filter( it -> Integer.valueOf(it.toString()) <= 9)
+                .forEach(result::append);
+
+        new CountDownLatch(1).await(1000,TimeUnit.MILLISECONDS);
+
+        Assert.assertEquals(expected.toString(), result.toString());
+    }
+
+    //========================================================================================
+
 
     @Test
     public void generateMutable() {

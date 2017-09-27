@@ -4,6 +4,7 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.reactivestreams.Processor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import reactor.core.Disposable;
@@ -13,6 +14,7 @@ import reactor.core.scheduler.Schedulers;
 
 import java.util.*;
 import java.util.concurrent.*;
+import java.util.stream.Stream;
 
 /**
  * @author vicboma
@@ -205,8 +207,9 @@ public class ParallelFluxTest {
                 .parallel(5, 256)
                 .runOn(Schedulers.parallel())
                 .groups()
+               // .map((key, value) ->  )
                 .toIterable()
-                .forEach(it -> result.append(it.key()+""+it.single().block()));
+                .forEach(it -> result.append(it.key()+it.single().block()));
 
         Assert.assertEquals(expectedThread.toString(), result.toString());
 
@@ -272,6 +275,7 @@ public class ParallelFluxTest {
 
         if(!disposable.isDisposed())
             disposable.dispose();
+
     }
 
 }
