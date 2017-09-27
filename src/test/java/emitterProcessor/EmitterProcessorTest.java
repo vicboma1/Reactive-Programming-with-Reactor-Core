@@ -27,6 +27,8 @@ public class EmitterProcessorTest {
     public void tearDown() throws Exception {
     }
 
+    //========================================================================================
+
     /**
      *
      * @throws Exception
@@ -38,6 +40,8 @@ public class EmitterProcessorTest {
 
         Assert.assertEquals(expected, stream.getClass().getName());
     }
+
+    //========================================================================================
 
     /**
      *
@@ -59,6 +63,8 @@ public class EmitterProcessorTest {
         stream.onNext(expected);
     }
 
+    //========================================================================================
+
     /**
      *
      * @throws Exception
@@ -77,6 +83,8 @@ public class EmitterProcessorTest {
 
         stream.onNext(expected);
     }
+
+    //========================================================================================
 
     /**
      *

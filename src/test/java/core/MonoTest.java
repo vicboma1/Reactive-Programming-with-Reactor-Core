@@ -28,6 +28,8 @@ public class MonoTest {
     public void tearDown() throws Exception {
     }
 
+    //========================================================================================
+
     @Test
     public void never() throws Exception {
 
@@ -35,6 +37,8 @@ public class MonoTest {
 
         Assert.assertEquals(expected,Mono.never().toString());
     }
+
+    //========================================================================================
 
     @Test
     public void just() throws Exception {
@@ -49,6 +53,8 @@ public class MonoTest {
 
         Assert.assertEquals(expected.toString(), result.toString());
     }
+
+    //========================================================================================
 
     @Test
     public void delay() throws Exception {
@@ -65,6 +71,8 @@ public class MonoTest {
         Assert.assertEquals(expected.toString(), "");
 
     }
+
+    //========================================================================================
 
     @Test
     public void delaySubscribe() throws Exception {
@@ -84,6 +92,8 @@ public class MonoTest {
         Assert.assertEquals(expected.toString(), result.toString());
     }
 
+    //========================================================================================
+
     @Test
     public void and() throws Exception {
         String hello = "Hello";
@@ -100,6 +110,8 @@ public class MonoTest {
         Assert.assertEquals(hello,stringCompletableFuture.get());
     }
 
+    //========================================================================================
+
     @Test
     public void as() throws Exception {
 
@@ -112,6 +124,8 @@ public class MonoTest {
         Assert.assertTrue(1986 == result);
     }
 
+    //========================================================================================
+
     @Test
     public void cast() throws Exception {
 
@@ -123,6 +137,8 @@ public class MonoTest {
                     Assert.assertTrue(1986 == it);
                 });
     }
+
+    //========================================================================================
 
     @Test
     public void create() throws Exception {
@@ -137,6 +153,8 @@ public class MonoTest {
         Assert.assertTrue(expected == mono.block());
     }
 
+    //========================================================================================
+
     @Test
     public void empty() throws Exception {
         String expected = null;
@@ -145,6 +163,8 @@ public class MonoTest {
         Assert.assertEquals(expected, result.block());
     }
 
+    //========================================================================================
+
     @Test
     public void justOrEmpty() throws Exception {
         String expected = null;
@@ -152,6 +172,8 @@ public class MonoTest {
 
         Assert.assertEquals(expected, result.block());
     }
+
+    //========================================================================================
 
     @Test
     public void first() throws Exception {
@@ -166,6 +188,8 @@ public class MonoTest {
         Assert.assertEquals(expected, result.block());
 
     }
+
+    //========================================================================================
 
     @Test
     public void fromSupplier() throws Exception {
@@ -187,6 +211,8 @@ public class MonoTest {
 
     }
 
+    //========================================================================================
+
     @Test
     public void fromCallable() throws Exception {
         final StringBuilder result = new StringBuilder();
@@ -205,6 +231,8 @@ public class MonoTest {
 
         Assert.assertEquals(expected, result.toString());
     }
+
+    //========================================================================================
 
     @Test
     public void fromRunnable() throws Exception {
@@ -225,6 +253,8 @@ public class MonoTest {
         Assert.assertEquals(expected, result.toString());
     }
 
+    //========================================================================================
+
     @Test
     public void fromCompletable() throws Exception {
         final CompletableFuture<Boolean> expected = CompletableFuture.completedFuture(false);
@@ -241,6 +271,8 @@ public class MonoTest {
         Assert.assertEquals("MonoCompletionStage", result.toString());
     }
 
+
+    //========================================================================================
 
   /*  @Test
     public void zipImpl() throws Exception{
@@ -271,6 +303,8 @@ public class MonoTest {
         Assert.assertEquals(expected.toString(), result.toString());
     }
 */
+    //========================================================================================
+
     @Test
     public void zip() throws Exception{
 

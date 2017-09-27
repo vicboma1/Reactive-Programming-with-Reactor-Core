@@ -1,14 +1,18 @@
 package core;
 
+import emitterProcessor.EmitterProcessorTest;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import reactor.core.Disposable;
 import reactor.core.Exceptions;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.core.publisher.SignalType;
+import reactor.core.scheduler.Schedulers;
 import reactor.util.function.Tuple2;
 
 import java.io.IOException;
@@ -24,6 +28,8 @@ import java.util.concurrent.atomic.LongAdder;
  * @author vicboma
  */
 public class FluxTest {
+
+    static final Logger LOG = LoggerFactory.getLogger(FluxTest.class);
 
     final String the = "the";
     final String words1 = "word";
@@ -56,12 +62,15 @@ public class FluxTest {
         words = null;
     }
 
+    //========================================================================================
+
     @Test
     public void never() throws Exception {
         final String expected = "FluxNever";
         Assert.assertEquals(expected, Flux.never().toString());
     }
 
+    //========================================================================================
 
     @Test
     public void just() throws Exception {
@@ -80,6 +89,8 @@ public class FluxTest {
         Assert.assertEquals(expected.toString(), result.toString());
     }
 
+    //========================================================================================
+
     @Test
     public void fromIterable() throws Exception {
 
@@ -97,6 +108,8 @@ public class FluxTest {
 
         Assert.assertEquals(words.toString(), result.toString());
     }
+
+    //========================================================================================
 
     @Test
     public void fromIterableWithThrowableWithCompleteConsume() throws Exception {
@@ -117,6 +130,8 @@ public class FluxTest {
                             Assert.assertEquals(words.toString(), result.toString());
                         });
     }
+
+    //========================================================================================
 
     @Test
     public void findingMissingLetterFromArray() {
@@ -157,6 +172,8 @@ public class FluxTest {
 
         Assert.assertTrue(expected.isEmpty());
     }
+
+    //========================================================================================
 
     @Test
     public void restoringMissingLetterIterable() {
@@ -201,6 +218,8 @@ public class FluxTest {
         Assert.assertTrue(expected.isEmpty());
     }
 
+    //========================================================================================
+
     @Test
     public void restoringMissingLetterStream() {
         final List<String> result = List.of(
@@ -243,6 +262,8 @@ public class FluxTest {
 
         Assert.assertTrue(expected.isEmpty());
     }
+
+    //========================================================================================
 
     @Test
     public void restoringMissingLetterToArray() {
@@ -287,6 +308,8 @@ public class FluxTest {
         Assert.assertTrue(expected.isEmpty());
     }
 
+    //========================================================================================
+
     @Test
     public void subscribeNonBlocking() {
 
@@ -299,6 +322,8 @@ public class FluxTest {
                     Assert.assertTrue(false);
                 });
     }
+
+    //========================================================================================
 
     @Test
     public void subscribeBlockingWithToStream() {
@@ -321,6 +346,8 @@ public class FluxTest {
 
         Assert.assertEquals(expected, result.toString());
     }
+
+    //========================================================================================
 
     @Test
     public void firstWithoutDelaySubcription() {
@@ -348,6 +375,8 @@ public class FluxTest {
 
     }
 
+    //========================================================================================
+
     @Test
     public void firstWithDelayElement() {
         String late = "oops I'm late";
@@ -365,7 +394,7 @@ public class FluxTest {
                         ),
                 Flux.just(first)
                         .delayElements(
-                                Duration.ofMillis(33)
+                                Duration.ofMillis(100)
                         )
         )
                 .toIterable()
@@ -374,6 +403,8 @@ public class FluxTest {
         Assert.assertEquals(expected.toString(), result.toString());
 
     }
+
+    //========================================================================================
 
     @Test
     public void generate() {
@@ -407,6 +438,8 @@ public class FluxTest {
 
         Assert.assertEquals(expected.toString(), result.toString());
     }
+
+    //========================================================================================
 
     @Test
     public void generateMutable() {
@@ -442,6 +475,8 @@ public class FluxTest {
         Assert.assertEquals(expected.toString(), result.toString());
     }
 
+    //========================================================================================
+
     private String alphabet(int letterNumber) {
         if (letterNumber < 1 || letterNumber > 26) {
             return null;
@@ -476,6 +511,8 @@ public class FluxTest {
         Assert.assertEquals(expected.toString(), result.toString());
     }
 
+    //========================================================================================
+
     @Test
     public void using() {
         final StringBuilder result = new StringBuilder();
@@ -507,6 +544,8 @@ public class FluxTest {
 
     }
 
+    //========================================================================================
+
     @Test
     public void range() throws Exception {
 
@@ -522,6 +561,8 @@ public class FluxTest {
         Assert.assertEquals(Integer.valueOf(0), thirdRante.blockFirst());
         Assert.assertTrue(thirdRante.blockFirst() >= Integer.valueOf(0) && thirdRante.blockLast() <= 8);
     }
+
+    //========================================================================================
 
     @Test
     public void doFinally() throws Exception {
@@ -542,6 +583,8 @@ public class FluxTest {
         Assert.assertEquals(expected, result.toString());
 
     }
+
+    //========================================================================================
 
     @Test
     public void onError() throws Exception {
@@ -565,6 +608,8 @@ public class FluxTest {
 
         Assert.assertEquals(expected, result.getLast());
     }
+
+    //========================================================================================
 
     @Test
     public void onErrorRetry() throws Exception {
@@ -590,6 +635,8 @@ public class FluxTest {
         Assert.assertEquals(expected, result.size());
     }
 
+    //========================================================================================
+
     @Test
     public void onErrorRetryWhen() throws Exception {
 
@@ -610,6 +657,8 @@ public class FluxTest {
                 });
 
     }
+
+    //========================================================================================
 
     private String convert(int i) throws IOException {
         if (i > 3)
@@ -645,6 +694,8 @@ public class FluxTest {
         );
     }
 
+    //========================================================================================
+
     @Test
     public void log() throws Exception {
         Integer expected = 30;
@@ -667,6 +718,8 @@ public class FluxTest {
 
     }
 
+    //========================================================================================
+
     @Test
     public void transform() throws Exception {
         final List<String> expected = List.of("BLUE", "GREEN", "PURPLE");
@@ -680,6 +733,8 @@ public class FluxTest {
                 .toIterable()
                 .forEach(it -> Assert.assertTrue(expected.contains(it)));
     }
+
+    //========================================================================================
 
     @Test
     public void compose() throws Exception {
@@ -709,6 +764,7 @@ public class FluxTest {
                 .forEach(it -> Assert.assertTrue(expected2.contains(it)));
     }
 
+    //========================================================================================
 
     @Test
     public void merge() throws Exception {
@@ -723,6 +779,8 @@ public class FluxTest {
         Assert.assertEquals(expected.toString(), result.toString());
 
     }
+
+    //========================================================================================
 
     @Test
     public void mergeSequential() throws Exception {
@@ -750,5 +808,28 @@ public class FluxTest {
 
         Assert.assertEquals(expected.toString(), result.toString());
 
+    }
+
+    //========================================================================================
+
+    @Test
+    public void publishOn() throws Exception {
+
+        Flux.just("blue", "white", "red")
+                .doOnEach(it -> LOG.info("doOnEach: " + it))
+                .doOnSubscribe(it -> LOG.info("doOnSubscribe: " + it))
+                .doOnComplete(() -> LOG.info("doOnComplete!!!"))
+                .map(String::toUpperCase)
+                .subscribeOn(
+                        Schedulers.parallel()
+                )
+                .publishOn(
+                        Schedulers.parallel(),
+                        2
+                )
+                .toStream()
+                .forEach(value -> {
+                    LOG.info("Consumed: " + value);
+                });
     }
 }

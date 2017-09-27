@@ -25,6 +25,8 @@ public class ParallelFluxTest {
     public void tearDown() throws Exception {
     }
 
+    //========================================================================================
+
     @Test
     public void parallelWithOneThread() throws Exception {
 
@@ -57,6 +59,8 @@ public class ParallelFluxTest {
         Assert.assertEquals(expected.toString(),result.toString());
     }
 
+    //========================================================================================
+
     @Test
     public void parallelWithSchedulers() throws Exception {
         final SortedSet<Integer> resultThread = new TreeSet<>();
@@ -80,6 +84,8 @@ public class ParallelFluxTest {
         new CountDownLatch(1).await(2000, TimeUnit.MILLISECONDS);
 
     }
+
+    //========================================================================================
 
     @Test
     public void elasticWithSchedulers() throws Exception {
@@ -109,6 +115,8 @@ public class ParallelFluxTest {
         Assert.assertEquals(expectedThread.size(), resultThreadSorted.size());
         Assert.assertEquals(expected.toString(), resultSynchronize.toString());
     }
+
+    //========================================================================================
 
     @Test
     public void fromExecutorsWithSchedulers() throws Exception {
@@ -141,6 +149,8 @@ public class ParallelFluxTest {
 
     }
 
+    //========================================================================================
+
     @Test
     public void fromExecutorServiceWithSchedulers() throws Exception {
         final List<String> expected = List.of("ForkJoinPool-1-worker");
@@ -172,6 +182,8 @@ public class ParallelFluxTest {
         Assert.assertEquals(expectedThread.size(), resultSynchronize.size());
 
     }
+
+    //========================================================================================
 
     @Test
     public void groups() throws Exception {

@@ -69,6 +69,9 @@
 * doOnNext
 * merge
 * mergeSequential
+* publishOn
+* subscribeOn
+* prefetch
 
 ## EmitterProcessor - [Testing](https://github.com/vicboma1/Reactive-Programming-with-Reactor-Core/blob/master/src/test/java/emitterProcessor/EmitterProcessorTest.java)
 

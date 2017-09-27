@@ -20,6 +20,8 @@ public class ConnectableFluxTest {
     public void tearDown() throws Exception {
     }
 
+    //========================================================================================
+
     @Test
     public void connect() throws Exception {
         final String done_subscribing = "done subscribing";
@@ -76,6 +78,8 @@ public class ConnectableFluxTest {
 
     }
 
+    //========================================================================================
+
     @Test
     public void autoConnect() throws Exception {
         final String subscribed_to_source_ = "subscribed to source ";
@@ -127,6 +131,8 @@ public class ConnectableFluxTest {
         Assert.assertEquals(expected.toString(),result.toString());
 
     }
+
+    //========================================================================================
 
     @Test
     public void autoConnectMinSubscribed() throws Exception {
