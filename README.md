@@ -56,6 +56,7 @@
 * range
 * doFinally
 * onError
+* onErrorReturn
 * doOnNext
 * doOnEach
 * doOnCompleted

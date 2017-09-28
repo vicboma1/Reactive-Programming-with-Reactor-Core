@@ -621,6 +621,7 @@ public class FluxTest {
 
     @Test
     public void onError() throws Exception {
+        final CompletableFuture promise = new CompletableFuture();
         final LinkedList<String> result = new LinkedList();
 
         final String expected = "Error";
@@ -631,14 +632,18 @@ public class FluxTest {
 
                     throw new RuntimeException("RuntimeException!!!!");
                 })
+                .onErrorMap(it -> it)
                 .onErrorReturn(expected)
+                .doOnError(it -> result.add(it.getMessage()))
                 .subscribe(
                         result::add,
-                        System.err::println
+                        System.err::println,
+                        () ->{
+                            promise.complete(null);
+                        }
                 );
 
-        new CountDownLatch(1).await(2000, TimeUnit.MILLISECONDS);
-
+        promise.get();
         Assert.assertEquals(expected, result.getLast());
     }
 
@@ -1048,8 +1053,6 @@ public class FluxTest {
         Assert.assertEquals(expected.toString(),result.toString());
 
     }
-
-
 
 }
 
