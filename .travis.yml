@@ -7,7 +7,7 @@ cache:
 # use operating systems.
 os:
   - linux
-dist: xenial
+dist: trusty
 
 jdk:
   - oraclejdk9
