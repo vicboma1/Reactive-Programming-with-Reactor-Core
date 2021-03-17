@@ -1,9 +1,5 @@
 language: java
-sudo: false
-notifications:
-  email:
-    on_success: never
-    on_failure: change
+sudo: true
 cache:
   directories:
        - $HOME/.m2
@@ -11,6 +7,7 @@ cache:
 # use operating systems.
 os:
   - linux
+dist: xenial
 
 jdk:
   - oraclejdk9
